@@ -1,13 +1,9 @@
 
-
-ENV HOME /Users/b718675/Projects/another-server
-# TODO
-ENV PROJECT $HOME/another-server
-
-# Build from.
+# Build from:
 FROM node:12
 
-WORKDIR $HOME
+
+WORKDIR /
 
 # Copy package & package-lock
 COPY package*.json ./
@@ -19,8 +15,8 @@ RUN npm install
 # Bundle app source
 COPY . .
 
-EXPOSE 8080
-CMD [ "node", "server.ts" ]
+EXPOSE 3000
+CMD [ "npm", "start" ]
 
 
 
