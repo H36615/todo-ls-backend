@@ -1,9 +1,17 @@
 
 
-// import express from 'express';
+import express from 'express';
 
-let i: number = 2;
+const port = 3000;
+const app = express();
 
+app.get('/', (req, res) => {
+  res.send('Hello World');
+});
 
+app.listen(port, () => {
+    console.log("running on port " + port);
+    
+});
 
-console.log("Program has ended.");
+console.log("Program has ended. ");
