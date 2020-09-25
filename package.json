@@ -5,8 +5,10 @@
     "author": "H36615",
     "main": "src/index.ts",
     "dependencies": {
+        "dotenv": "^8.2.0",
         "express": "^4.17.1",
-        "knex": "^0.21.5"
+        "knex": "^0.21.5",
+        "pg": "^8.3.3"
     },
     "scripts": {
         "start": "npx ts-node-dev src/index.ts",
