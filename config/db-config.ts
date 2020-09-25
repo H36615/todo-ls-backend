@@ -1,9 +1,9 @@
 
 
-import knex from "knex";
+import knex, { Config } from "knex";
 import knexFile from "../knexfile";
 
 const enviroment = "development"; // TODO || .envify process.env
-const configOptions = knexFile[enviroment];
+const configOptions: Config = knexFile[enviroment] as Config;
 
 export default knex(configOptions);
