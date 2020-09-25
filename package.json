@@ -12,7 +12,8 @@
     },
     "scripts": {
         "start": "npx ts-node-dev src/index.ts",
-        "lint": "npx eslint src/"
+        "lint": "npx eslint src/",
+        "migrate": "npx knex migrate:latest"
     },
     "devDependencies": {
         "@types/express": "^4.17.8",
