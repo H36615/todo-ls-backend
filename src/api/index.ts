@@ -8,5 +8,6 @@ const publicApiRouter = Router();
 const authenticatedApiRouter = Router();
 
 publicApiRouter.use("/", testRoute);
+authenticatedApiRouter.use("/", todoItemRoute);
 
 export { publicApiRouter as publicApi, authenticatedApiRouter as authenticatedApi };
