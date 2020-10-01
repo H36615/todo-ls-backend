@@ -1,6 +1,6 @@
 
-import testRoute from "./routes/test";
-import todoItemRoute from "./routes/todo-item";
+import testRoute from "./routes/test/test";
+import todoItemRoute from "./routes/todo-item/todo-item";
 import { Router } from "express";
 import { passportConfig, passportStrategies } from "../config/passport-config";
 
