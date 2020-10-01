@@ -1,18 +1,21 @@
 
 import passportConfig from "passport";
 import { ExtractJwt, Strategy as JWTStrategy, VerifiedCallback } from "passport-jwt";
+import * as dotenv from "dotenv";
+dotenv.config({ path: __dirname+"/../../.env" });
 
 interface ILoginPayload {
     user: string,
     userPassword: string,
 }
 
-// TODO .envify!
-const secret = "";
-const authorizationHeaderName = "";
-const passportStrategies = {
+const secret = process.env.JWT_SECRET;
+const authorizationHeaderName: string = process.env.AUTHORIZATION_HEADER_NAME || "";
+const passportStrategies: { [key: string]: string; } = {
 	user: "user",
 };
+
+checkEnviromentVariables();
 
 passportConfig.use(
 	passportStrategies.user,
@@ -55,6 +58,15 @@ function valueExistsForEveryInterfaceProperty<TInterface>(object: TInterface): b
 	// TOOD test.
     
 	return true;
+}
+
+/** Check that env variables hold values */
+function checkEnviromentVariables() {
+	if (secret == undefined || authorizationHeaderName == undefined)
+		throw new Error("secret enviroment variable missing");
+	
+	if (authorizationHeaderName == "")
+		throw new Error("authorization header enviroment variable missing");
 }
 
 export { passportConfig, passportStrategies };
