@@ -1,4 +1,4 @@
 
 
-docker build -t another-server . &&
-docker run -p 3001:3000 another-server
+docker build -t todo-ls-backend . &&
+docker run -p 3001:3000 todo-ls-backend

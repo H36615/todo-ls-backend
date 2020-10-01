@@ -1,6 +1,6 @@
 {
-    "name": "another-server",
-    "version": "0.0.1",
+    "name": "todo-ls-backend",
+    "version": "0.1.0",
     "description": "-",
     "author": "H36615",
     "main": "src/index.ts",
@@ -8,6 +8,7 @@
         "dotenv": "^8.2.0",
         "express": "^4.17.1",
         "knex": "^0.21.5",
+        "passport-jwt": "^4.0.0",
         "pg": "^8.3.3"
     },
     "scripts": {
