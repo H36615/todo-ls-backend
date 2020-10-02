@@ -3,7 +3,7 @@
 import * as Knex from "knex";
 import { IUser, userDBModel } from "../../src/models/user/user-item";
 
-const userData1Id = 1;
+const userData1Id = 0;
 
 export async function seed(knex: Knex): Promise<void> {
 	// Deletes ALL existing entries
@@ -19,7 +19,7 @@ export async function seed(knex: Knex): Promise<void> {
 		password: "testman",
 	};
 	const userData2: IUser = {
-		id: 2,
+		id: 1,
 		username: "DevguY",
 		tag: 0,
 		email: "devguy@domain.net",
