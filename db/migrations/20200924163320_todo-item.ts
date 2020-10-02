@@ -4,11 +4,8 @@
 import * as Knex from "knex";
 import { todoItemDBModel, TodoItemStatus } from "../../src/models/todo-item/todo-item";
 
-const todoItemTable = "todo_item";
-
-
 export async function up(knex: Knex): Promise<void> {
-	return knex.schema.createTable(todoItemTable, tbl => {
+	return knex.schema.createTable(todoItemDBModel.table, tbl => {
 		tbl.increments();
 		tbl.text(todoItemDBModel.columns.task).notNullable();
 		tbl.enum(
@@ -19,9 +16,8 @@ export async function up(knex: Knex): Promise<void> {
 	});
 }
 
-
 export async function down(knex: Knex): Promise<void> {
-	knex.schema.dropTableIfExists(todoItemTable);
+	knex.schema.dropTableIfExists(todoItemDBModel.table);
 
 	// TODO enum types seem not to be affected?
 }
