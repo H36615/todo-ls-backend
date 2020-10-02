@@ -2,11 +2,11 @@
 import passportConfig from "passport";
 import { ExtractJwt, Strategy as JWTStrategy, VerifiedCallback } from "passport-jwt";
 import * as dotenv from "dotenv";
-dotenv.config({ path: __dirname+"/../../.env" });
+dotenv.config({ path: __dirname + "/../../.env" });
 
 interface ILoginPayload {
-    user: string,
-    userPassword: string,
+	user: string,
+	userPassword: string,
 }
 
 const secret = process.env.JWT_SECRET;
@@ -43,7 +43,7 @@ passportConfig.use(
 function userIsAuthorized(loginPayload: ILoginPayload): boolean {
 	// TODO implement.
 	// TODO test.
-    
+
 	return true;
 }
 
@@ -56,7 +56,7 @@ function createError(done: VerifiedCallback, errorMessage: string) {
 function valueExistsForEveryInterfaceProperty<TInterface>(object: TInterface): boolean {
 	// TODO implement.
 	// TOOD test.
-    
+
 	return true;
 }
 
@@ -64,7 +64,7 @@ function valueExistsForEveryInterfaceProperty<TInterface>(object: TInterface): b
 function checkEnviromentVariables() {
 	if (secret == undefined || authorizationHeaderName == undefined)
 		throw new Error("secret enviroment variable missing");
-	
+
 	if (authorizationHeaderName == "")
 		throw new Error("authorization header enviroment variable missing");
 }

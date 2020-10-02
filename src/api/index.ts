@@ -10,8 +10,12 @@ const authenticatedApiRouter = Router();
 publicApiRouter.use("/", healthRoute);
 authenticatedApiRouter.use(
 	"/",
-	passportConfig.authenticate(passportStrategies.user, { session: false }), // TODO Do we want to use session?
+	// TODO Do we want to use 'session'?
+	passportConfig.authenticate(passportStrategies.user, { session: false }),
 	todoItemRoute,
 );
 
-export { publicApiRouter as publicApi, authenticatedApiRouter as authenticatedApi };
+export {
+	publicApiRouter as publicApi,
+	authenticatedApiRouter as authenticatedApi
+};
