@@ -10,7 +10,7 @@ enum TodoItemStatus {
 
 interface ITodoItem {
 	id: number,
-	userId: number,
+	user_id: number,
     task: string,
     status: TodoItemStatus,
 }
@@ -19,7 +19,7 @@ const todoItemDBModel: IDatabaseModel<ITodoItem> = {
 	table: "todo_item",
 	columns: {
 		id: "id",
-		userId: "user_id",
+		user_id: "user_id",
 		task: "task",
 		status: "status",
 	},

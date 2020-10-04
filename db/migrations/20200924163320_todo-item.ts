@@ -8,7 +8,7 @@ import { userDBModel } from "../../src/models/user/user-item";
 export async function up(knex: Knex): Promise<void> {
 	return knex.schema.createTable(todoItemDBModel.table, table => {
 		table.increments(todoItemDBModel.columns.id).primary();
-		table.integer(todoItemDBModel.columns.userId)
+		table.integer(todoItemDBModel.columns.user_id)
 			.notNullable().references(userDBModel.columns.id).inTable(userDBModel.table);
 		table.text(todoItemDBModel.columns.task).notNullable();
 		table.enum(

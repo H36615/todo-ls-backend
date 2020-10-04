@@ -13,13 +13,13 @@ const responseMock: ITodoItem[] = [
 		id: 10,
 		status: TodoItemStatus.inProgres,
 		task: "do a thing",
-		userId: 20,
+		user_id: 20,
 	},
 	{
 		id: 11,
 		status: TodoItemStatus.delayed,
 		task: "make that",
-		userId: 21,
+		user_id: 21,
 	}
 ];
 
