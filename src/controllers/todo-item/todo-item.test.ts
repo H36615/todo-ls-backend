@@ -1,47 +1,60 @@
+import { mockDBConfig } from "../../../testing/db-mocks";
+import { createResMock } from "../../../testing/express-mocks";
+import { mockLogger } from "../../../testing/logger-mocks";
+import { dBConfig } from "../../config/db-config";
+import { logError } from "../../logger/logger";
+import { ITodoItem, todoItemDBModel, TodoItemStatus } from "../../models/todo-item/todo-item";
+import { getAllTodoItems } from "./todo-item";
 /* eslint-disable @typescript-eslint/no-explicit-any */
 
-import mockKnex from "mock-knex";
-import dbConfig from "../../config/db-config";
-import { ITodoItem, TodoItemStatus } from "../../models/todo-item/todo-item";
-import { getAllTodoItems } from "./todo-item";
+jest.mock("../../config/db-config");
+jest.mock("../../logger/logger");
 
-mockKnex.mock(dbConfig);
+test("getAllTodoItems should respond w/ correct value(s)", async () => {
 
-const tracker = mockKnex.getTracker();
-const responseMock: ITodoItem[] = [
-	{
-		id: 10,
-		status: TodoItemStatus.inProgres,
-		task: "do a thing",
-		user_id: 20,
-	},
-	{
-		id: 11,
-		status: TodoItemStatus.delayed,
-		task: "make that",
-		user_id: 21,
-	}
-];
+	const responseMock: ITodoItem[] = [
+		{
+			id: 10,
+			status: TodoItemStatus.inProgres,
+			task: "do a thing",
+			user_id: 20,
+		},
+		{
+			id: 11,
+			status: TodoItemStatus.delayed,
+			task: "make that",
+			user_id: 21,
+		}
+	];
 
-test("getAllTodoItems should respond w/ correct value(s)", async (done) => {
 	// Arrange
-	tracker.install();
-	tracker.on(
-		"query",
-		(query) => { query.response(responseMock); }
-	);
-	const mockRes: any = {
-		send: jest.fn(),
-	};
+	mockLogger(logError);
+	mockDBConfig(dBConfig, responseMock);
+	const resMock = createResMock();
 
 	// Act
-	getAllTodoItems({} as any, mockRes).then(() => {
+	await getAllTodoItems({} as any, resMock, {} as any);
 
-		// Assert
-		expect(mockRes.send).toHaveBeenCalledWith(responseMock);
-
-		done();
-	});
+	// Assert
+	expect(logError).not.toHaveBeenCalled();
+	expect(resMock.send).toHaveBeenCalledWith(responseMock);
 });
 
-tracker.uninstall();
+test("getAllTodoItems should catch error properly", async () => {
+
+	// -- Arrange
+	const error = new Error("rejecty");
+	mockLogger(logError);
+	mockDBConfig(dBConfig, error);
+	const nextSpy: any = jest.fn();
+
+	// -- Act
+	await getAllTodoItems({} as any, {} as any, nextSpy);
+
+	// -- Assert
+	expect(logError).toHaveBeenCalledWith(error);
+	expect(dBConfig).toHaveBeenCalledWith(todoItemDBModel.table);
+	// TODO
+	// expect(dBConfig.select).toHaveBeenCalledWith();
+	expect(nextSpy).toHaveBeenCalledWith(expect.any(Error));
+});
