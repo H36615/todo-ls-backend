@@ -1,6 +1,31 @@
+import { mockExpress } from "../../../../testing/express-mocks";
 
-// import router from "./todo-item";
+const todoItemAllRoute = "/todo-item/all";
+describe(todoItemAllRoute, () => {
 
-test("test routes", () => {
-	throw new Error("Not implemented");
+	test("no spy should be called without initialization", () => {
+	
+		// Arrange
+		const getSpy = jest.fn();
+		mockExpress(getSpy);
+	
+		// Assert
+		expect(getSpy).not.toHaveBeenCalled();
+	});
+
+	test("route should be initialized", () => {
+
+		// Arrange
+		const getSpy = jest.fn();
+		mockExpress(getSpy);
+	
+		// Act
+		require("./todo-item");
+	
+		// Assert
+		expect(getSpy).toHaveBeenCalledWith(
+			todoItemAllRoute,
+			expect.any(Function), // Not really easy way to test func param.
+		);
+	});
 });
