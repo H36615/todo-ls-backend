@@ -58,3 +58,7 @@ test("getAllTodoItems should catch error properly", async () => {
 	// expect(dBConfig.select).toHaveBeenCalledWith();
 	expect(nextSpy).toHaveBeenCalledWith(expect.any(Error));
 });
+
+test("addTodoItem", () => {
+	throw new Error("not implemented");
+});

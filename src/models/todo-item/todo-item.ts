@@ -1,3 +1,4 @@
+import { number, object, string } from "joi";
 import { IDatabaseModel } from "../interfaces";
 
 /** String values represent db enum values. */
@@ -8,11 +9,13 @@ enum TodoItemStatus {
     delayed = "delayed",
 }
 
-interface ITodoItem {
-	id: number,
+interface ITodoItem_IdLess {
 	user_id: number,
     task: string,
     status: TodoItemStatus,
+}
+interface ITodoItem extends ITodoItem_IdLess {
+	id: number,
 }
 
 const todoItemDBModel: IDatabaseModel<ITodoItem> = {
@@ -25,8 +28,18 @@ const todoItemDBModel: IDatabaseModel<ITodoItem> = {
 	},
 };
 
+const todoItemValidator = object(
+	{
+		user_id: number().min(1).required(),
+		task: string().min(1).max(100).required(),
+		status: string().valid(...Object.values(TodoItemStatus)),
+	}
+);
+
 export {
 	ITodoItem,
+	ITodoItem_IdLess,
 	TodoItemStatus,
-	todoItemDBModel
+	todoItemDBModel,
+	todoItemValidator,
 };
