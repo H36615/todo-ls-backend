@@ -1,30 +1,30 @@
 import { mockExpress } from "../../../../testing/express-mocks";
 
-const todoItemAllRoute = "/todo-item/all";
-describe(todoItemAllRoute, () => {
+const todoItemAddRoute = "/todo-item/add";
+describe(todoItemAddRoute, () => {
 
 	test("no spy should be called without initialization", () => {
 	
 		// Arrange
-		const getSpy = jest.fn();
-		mockExpress(getSpy);
+		const postSpy = jest.fn();
+		mockExpress(undefined, postSpy);
 	
 		// Assert
-		expect(getSpy).not.toHaveBeenCalled();
+		expect(postSpy).not.toHaveBeenCalled();
 	});
 
 	test("route should be initialized", () => {
 
 		// Arrange
-		const getSpy = jest.fn();
-		mockExpress(getSpy);
+		const postSpy = jest.fn();
+		mockExpress(postSpy, postSpy);
 	
 		// Act
 		require("./todo-item");
 	
 		// Assert
-		expect(getSpy).toHaveBeenCalledWith(
-			todoItemAllRoute,
+		expect(postSpy).toHaveBeenCalledWith(
+			todoItemAddRoute,
 			expect.any(Function), // Not really easy way to test func param.
 		);
 	});

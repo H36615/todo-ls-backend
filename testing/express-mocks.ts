@@ -17,9 +17,14 @@ export const mockExpress = (getSpy?: jest.Mock, postSpy?: jest.Mock): void => {
 		"express",
 		() => ({
 			Router: () => ({
-				get: getSpy || (() => ({})),
-				post: postSpy || (() => ({})),
+				get: getSpy || empty,
+				post: postSpy || empty,
 			})
 		})
 	);
+};
+
+const empty = () => {
+	// Uncomment for debugging.
+	// console.log("missing router property");
 };
