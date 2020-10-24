@@ -26,10 +26,6 @@ passportConfig.use(
 		},
 		(payload: ILoginPayload, done: VerifiedCallback) => {
 
-			// We need to check that payload comes with all interface-defined property values.
-			if (!valueExistsForEveryInterfaceProperty<ILoginPayload>(payload))
-				return createError(done, "one or more property value missing");
-
 			if (userIsAuthorized(payload))
 				return done(null, true);
 
@@ -44,20 +40,15 @@ function userIsAuthorized(loginPayload: ILoginPayload): boolean {
 	// TODO implement.
 	// TODO test.
 
-	return true;
+	if (loginPayload.user && loginPayload.userPassword) {
+		return true;
+	}
+
+	return false;
 }
 
 function createError(done: VerifiedCallback, errorMessage: string) {
 	return done(errorMessage, false);
-}
-
-// TODO remove eslint-disabler after implementation.
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
-function valueExistsForEveryInterfaceProperty<TInterface>(object: TInterface): boolean {
-	// TODO implement.
-	// TOOD test.
-
-	return true;
 }
 
 /** Check that env variables hold values */
