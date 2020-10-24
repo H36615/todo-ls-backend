@@ -32,7 +32,7 @@ const todoItemValidator = object(
 	{
 		user_id: number().min(1).required(),
 		task: string().min(1).max(100).required(),
-		status: string().valid(...Object.values(TodoItemStatus)),
+		status: string().valid(...Object.values(TodoItemStatus)).required(),
 	}
 );
 

@@ -17,10 +17,10 @@ export const getAllTodoItems: IController = (req, res, next): Promise<void> => {
 export const addTodoItem: IController = (req, res, next): Promise<void> => {
 
 	// Validate param
-	return todoItemValidator.validateAsync(req.body).then(
+	return todoItemValidator.validateAsync(req.body).then((validatedValue: ITodoItem_IdLess) =>
 
 		// Add item
-		(validatedValue: ITodoItem_IdLess) => dBConfig(todoItemDBModel.table)
+		dBConfig(todoItemDBModel.table)
 			.insert(validatedValue)
 			.then(() => {
 				res.send(getResponseValue(ResponseType.OK));
