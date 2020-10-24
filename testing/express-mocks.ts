@@ -9,20 +9,17 @@ export const createResMock = (): any => ({
  * Mock selected express imports.
  * 
  * NOTE: One might want to use this mocker before importing the testable entity,
- * in which case the testable entity can be imported after this mocker use,
+ * in which case the testable entity should be imported after the use of this mocker,
  * using e.g. 'require("...")'.
  */
-export const mockExpress = (getSpy: jest.Mock | undefined): void => {
+export const mockExpress = (getSpy?: jest.Mock, postSpy?: jest.Mock): void => {
 	jest.doMock(
 		"express",
-		() => {
-			if (getSpy == undefined) throw new Error("get spy missing");
-
-			return {
-				Router: () => ({
-					get: getSpy,
-				})
-			};
-		}
+		() => ({
+			Router: () => ({
+				get: getSpy || (() => ({})),
+				post: postSpy || (() => ({})),
+			})
+		})
 	);
 };
