@@ -11,3 +11,7 @@ test("test that columns' key name and value match", () => {
 		expect(columnNames[i]).toEqual(columnValues[i]);
 	}
 });
+
+test("test that interface matches joi validator", () => {
+	throw new Error("Not implemented");
+});

@@ -1,4 +1,5 @@
-import { number, object, string } from "joi";
+
+import Joi from "joi";
 import { IDatabaseModel } from "../interfaces";
 
 /** String values represent db enum values. */
@@ -28,11 +29,11 @@ const todoItemDBModel: IDatabaseModel<ITodoItem> = {
 	},
 };
 
-const todoItemValidator = object(
+const todoItemValidator = Joi.object(
 	{
-		user_id: number().min(1).required(),
-		task: string().min(1).max(100).required(),
-		status: string().valid(...Object.values(TodoItemStatus)).required(),
+		user_id: Joi.number().min(1).required(),
+		task: Joi.string().min(1).max(100).required(),
+		status: Joi.string().valid(...Object.values(TodoItemStatus)).required(),
 	}
 );
 
