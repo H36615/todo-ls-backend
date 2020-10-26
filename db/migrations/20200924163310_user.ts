@@ -1,5 +1,5 @@
 import * as Knex from "knex";
-import { userDBModel } from "../../src/models/user/user-item";
+import { userDBModel } from "../../src/models/user/user";
 
 export async function up(knex: Knex): Promise<void> {
 	return knex.schema.createTable(

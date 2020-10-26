@@ -1,7 +1,7 @@
 // Generated with 'npx knex seed:make <table-name>>'.
 
 import * as Knex from "knex";
-import { IUser, userDBModel } from "../../src/models/user/user-item";
+import { IUser, userDBModel } from "../../src/models/user/user";
 
 const userData1Id = 0;
 
