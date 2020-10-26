@@ -17,7 +17,7 @@ describe(todoItemAddRoute, () => {
 
 		// Arrange
 		const postSpy = jest.fn();
-		mockExpress(postSpy, postSpy);
+		mockExpress(undefined, postSpy);
 	
 		// Act
 		require("./todo-item");
