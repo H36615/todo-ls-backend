@@ -1,4 +1,4 @@
-import { expressTestHelpers } from "../../../../testing/express-mocks";
+import { ExpressTestHelpers } from "../../../../testing/express-mocks";
 
 const registerUserRoute = "/user/register";
 describe(registerUserRoute, () => {
@@ -7,7 +7,7 @@ describe(registerUserRoute, () => {
 
 		// Arrange
 		const postSpy = jest.fn();
-		expressTestHelpers.mockExpress(undefined, postSpy);
+		ExpressTestHelpers.mockExpress(undefined, postSpy);
 
 		// Assert
 		expect(postSpy).not.toHaveBeenCalled();
@@ -17,7 +17,7 @@ describe(registerUserRoute, () => {
 
 		// Arrange
 		const postSpy = jest.fn();
-		expressTestHelpers.mockExpress(undefined, postSpy);
+		ExpressTestHelpers.mockExpress(undefined, postSpy);
 
 		// Act
 		require("./user");

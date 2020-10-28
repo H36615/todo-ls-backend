@@ -1,4 +1,4 @@
-import { expressTestHelpers } from "../../../../testing/express-mocks";
+import { ExpressTestHelpers } from "../../../../testing/express-mocks";
 
 
 const todoItemAddRoute = "/todo-item/add";
@@ -8,7 +8,7 @@ describe(todoItemAddRoute, () => {
 	
 		// Arrange
 		const postSpy = jest.fn();
-		expressTestHelpers.mockExpress(undefined, postSpy);
+		ExpressTestHelpers.mockExpress(undefined, postSpy);
 	
 		// Assert
 		expect(postSpy).not.toHaveBeenCalled();
@@ -18,7 +18,7 @@ describe(todoItemAddRoute, () => {
 
 		// Arrange
 		const postSpy = jest.fn();
-		expressTestHelpers.mockExpress(undefined, postSpy);
+		ExpressTestHelpers.mockExpress(undefined, postSpy);
 	
 		// Act
 		require("./todo-item");

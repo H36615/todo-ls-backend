@@ -6,7 +6,7 @@ export interface IReqMock {
 	// ...
 }
 
-export class expressTestHelpers {
+export class ExpressTestHelpers {
 
 	/** return mock represeting express's Response type */
 	public static createResMock(): any {

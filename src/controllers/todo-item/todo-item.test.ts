@@ -1,5 +1,5 @@
 import { mockDBConfig } from "../../../testing/db-mocks";
-import { expressTestHelpers, IReqMock } from "../../../testing/express-mocks";
+import { ExpressTestHelpers, IReqMock } from "../../../testing/express-mocks";
 import { mockLogger } from "../../../testing/logger-mocks";
 import { dBConfig } from "../../config/db-config";
 import { logError } from "../../logger/logger";
@@ -35,7 +35,7 @@ describe("getAllTodoItems", () => {
 		];
 		mockLogger(logError);
 		mockDBConfig(dBConfig, responseMock);
-		const resMock = expressTestHelpers.createResMock();
+		const resMock = ExpressTestHelpers.createResMock();
 
 		// -- Act
 		await getAllTodoItems({} as any, resMock, {} as any);
@@ -80,7 +80,7 @@ describe("addTodoItem", () => {
 		);
 
 		const nextSpy: any = jest.fn();
-		const resMock = expressTestHelpers.createResMock();
+		const resMock = ExpressTestHelpers.createResMock();
 		const reqMock: IReqMock = { body: { anything: "yes" } };
 
 		// -- Act
@@ -107,7 +107,7 @@ describe("addTodoItem", () => {
 		);
 
 		const nextSpy: any = jest.fn();
-		const resMock = expressTestHelpers.createResMock();
+		const resMock = ExpressTestHelpers.createResMock();
 		const reqMock: IReqMock = { body: { anything: "yes" } };
 
 		// -- Act
