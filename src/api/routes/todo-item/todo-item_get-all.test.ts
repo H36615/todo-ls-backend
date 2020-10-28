@@ -1,14 +1,14 @@
-import { mockExpress } from "../../../../testing/express-mocks";
+import { expressTestHelpers } from "../../../../testing/express-mocks";
 
 const todoItemAllRoute = "/todo-item/all";
 describe(todoItemAllRoute, () => {
 
 	test("no spy should be called without initialization", () => {
-	
+
 		// Arrange
 		const getSpy = jest.fn();
-		mockExpress(getSpy);
-	
+		expressTestHelpers.mockExpress(getSpy);
+
 		// Assert
 		expect(getSpy).not.toHaveBeenCalled();
 	});
@@ -17,11 +17,11 @@ describe(todoItemAllRoute, () => {
 
 		// Arrange
 		const getSpy = jest.fn();
-		mockExpress(getSpy);
-	
+		expressTestHelpers.mockExpress(getSpy);
+
 		// Act
 		require("./todo-item");
-	
+
 		// Assert
 		expect(getSpy).toHaveBeenCalledWith(
 			todoItemAllRoute,

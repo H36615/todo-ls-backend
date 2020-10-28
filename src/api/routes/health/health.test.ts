@@ -1,5 +1,5 @@
+import { expressTestHelpers } from "../../../../testing/express-mocks";
 
-import { mockExpress } from "../../../../testing/express-mocks";
 
 const healthRoute = "/health";
 describe(healthRoute, () => {
@@ -8,7 +8,7 @@ describe(healthRoute, () => {
 	
 		// Arrange
 		const getSpy = jest.fn();
-		mockExpress(getSpy);
+		expressTestHelpers.mockExpress(getSpy);
 	
 		// Assert
 		expect(getSpy).not.toHaveBeenCalled();
@@ -18,7 +18,7 @@ describe(healthRoute, () => {
 
 		// Arrange
 		const getSpy = jest.fn();
-		mockExpress(getSpy);
+		expressTestHelpers.mockExpress(getSpy);
 	
 		// Act
 		require("./health");

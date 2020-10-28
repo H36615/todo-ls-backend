@@ -1,5 +1,5 @@
 import { mockDBConfig } from "../../../testing/db-mocks";
-import { createResMock } from "../../../testing/express-mocks";
+import { expressTestHelpers, IReqMock } from "../../../testing/express-mocks";
 import { mockLogger } from "../../../testing/logger-mocks";
 import { dBConfig } from "../../config/db-config";
 import { logError } from "../../logger/logger";
@@ -10,7 +10,9 @@ import { getAllTodoItems } from "./todo-item";
 jest.mock("../../config/db-config");
 jest.mock("../../logger/logger");
 
-test("getAllTodoItems should respond w/ correct value(s)", async () => {
+describe("getAllTodoItems", () => {
+
+	test("should respond w/ correct value(s)", async () => {
 
 	const responseMock: ITodoItem[] = [
 		{
@@ -30,7 +32,7 @@ test("getAllTodoItems should respond w/ correct value(s)", async () => {
 	// Arrange
 	mockLogger(logError);
 	mockDBConfig(dBConfig, responseMock);
-	const resMock = createResMock();
+		const resMock = expressTestHelpers.createResMock();
 
 	// Act
 	await getAllTodoItems({} as any, resMock, {} as any);
@@ -40,7 +42,7 @@ test("getAllTodoItems should respond w/ correct value(s)", async () => {
 	expect(resMock.send).toHaveBeenCalledWith(responseMock);
 });
 
-test("getAllTodoItems should catch error properly", async () => {
+	test("should catch error properly", async () => {
 
 	// -- Arrange
 	const error = new Error("rejecty");
