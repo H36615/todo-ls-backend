@@ -31,7 +31,7 @@ const todoItemDBModel: IDatabaseModel<ITodoItem> = {
 
 const todoItemValidator = Joi.object(
 	{
-		user_id: Joi.number().min(1).required(),
+		user_id: Joi.number().min(0).required(),
 		task: Joi.string().min(1).max(100).required(),
 		status: Joi.string().valid(...Object.values(TodoItemStatus)).required(),
 	}
