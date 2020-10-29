@@ -1,5 +1,5 @@
 import { dBConfig } from "../../config/db-config";
-import { Logger } from "../../services/logger/logger";
+import { Logger } from "../../utils/logger/logger";
 import {
 	ITodoItem, ITodoItem_IdLess, todoItemDBModel, todoItemValidator
 } from "../../models/todo-item/todo-item";

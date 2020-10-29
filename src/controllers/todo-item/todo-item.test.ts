@@ -1,7 +1,7 @@
 import { mockDBConfig } from "../../../testing/db-mocks";
 import { ExpressTestHelpers, IReqMock } from "../../../testing/express-mocks";
 import { dBConfig } from "../../config/db-config";
-import { Logger } from "../../services/logger/logger";
+import { Logger } from "../../utils/logger/logger";
 import {
 	ITodoItem, todoItemDBModel, TodoItemStatus, todoItemValidator
 } from "../../models/todo-item/todo-item";
