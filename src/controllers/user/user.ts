@@ -1,7 +1,7 @@
 
 
 import { dBConfig } from "../../config/db-config";
-import { logError } from "../../logger/logger";
+import { Logger } from "../../services/logger/logger";
 import { IUser_IdLess, userDBModel, userValidator } from "../../models/user/user";
 import { getResponseValue, IController, ResponseType } from "../interfaces";
 
@@ -15,7 +15,7 @@ export const registerUser: IController = (req, res, next): Promise<void> => {
 		})
 
 	).catch(error => {
-		logError(error);
+		Logger.error(error);
 		next(error);
 	});
 };

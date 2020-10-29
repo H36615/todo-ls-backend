@@ -1,5 +1,5 @@
 import { dBConfig } from "../../config/db-config";
-import { logError } from "../../logger/logger";
+import { Logger } from "../../services/logger/logger";
 import {
 	ITodoItem, ITodoItem_IdLess, todoItemDBModel, todoItemValidator
 } from "../../models/todo-item/todo-item";
@@ -9,7 +9,7 @@ export const getAllTodoItems: IController = (req, res, next): Promise<void> => {
 	return dBConfig(todoItemDBModel.table).select("*").then((rows: ITodoItem[]) => {
 		res.send(rows);
 	}).catch(err => {
-		logError(err);
+		Logger.error(err);
 		next(err);
 	});
 };
@@ -26,7 +26,7 @@ export const addTodoItem: IController = (req, res, next): Promise<void> => {
 				res.send(getResponseValue(ResponseType.OK));
 			})
 	).catch(error => {
-		logError(error);
+		Logger.error(error);
 		next(error);
 	});
 };
