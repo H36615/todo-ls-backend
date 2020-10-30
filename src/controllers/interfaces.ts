@@ -5,7 +5,8 @@ export interface IController {
 }
 
 export const enum ResponseType {
-	OK
+	OK,
+	UserCreated,
 }
 
 /** default case is 'OK' */
@@ -14,5 +15,7 @@ export const getResponseValue = (responseType: ResponseType): { response: string
 	default:
 	case ResponseType.OK:
 		return { response: "ok"};
+	case ResponseType.UserCreated:
+		return { response: "user created"};
 	}
 };
