@@ -24,6 +24,30 @@ export class UserUtils {
 		}
 	}
 
+	public static getUserFromDBByUserId(userId: number): Promise<IExistingUser> {
+		return this.getUsersFromDBByUserId(userId).then((usersFound: Array<IExistingUser>) => {
+			if (usersFound.length < 1)
+				return Promise.reject(
+					"no users found"
+				);
+
+			if (usersFound.length > 1)
+				return Promise.reject(
+					"more than 1 user found"
+				);
+
+			return usersFound[0];
+		});
+	}
+
+	public static getUsersFromDBByUserId(userId: number): Promise<IExistingUser[]> {
+		if (userId === undefined)
+			return Promise.reject("user id undefined");
+
+		const searchObject: Pick<IExistingUser, "id"> = { id: userId };
+		return dBConfig(userDBModel.table).where(searchObject);
+	}
+
 	/**
 	 * Create new user to DB... if everything is OK.
 	 */
@@ -63,9 +87,11 @@ export class UserUtils {
 
 	/**
 	 * Whether user is authenticated with given login info.
-	 * If success, return authenticated login id (ATTOW email).
+	 * If success, return authenticated user id.
 	 */
-	public static isAuthenticatedWithLoginInfo(user: ILoginInformation): Promise<string> {
+	public static isAuthenticatedWithLoginInfo(user: ILoginInformation): Promise<number> {
+
+		let userId = -1;
 
 		return loginInformationValidator.validateAsync(user)
 			.then((validatedUser: ILoginInformation) => {
@@ -88,13 +114,18 @@ export class UserUtils {
 						"error: More than 1 users found during authentication."
 					);
 
+				userId = usersFound[0].id;
+
 				return compare(user.password, usersFound[0].password);
 			})
 			.then((hashesMatch: boolean) => {
 
+				if (userId < 0)
+					return Promise.reject("error: User id not set.");
+
 				// All OK.
 				if (hashesMatch)
-					return Promise.resolve(user.email);
+					return Promise.resolve(userId);
 
 				return Promise.reject("error: Hash did not match.");
 			})
