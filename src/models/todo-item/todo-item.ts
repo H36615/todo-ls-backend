@@ -29,10 +29,9 @@ const todoItemDBModel: IDatabaseModel<ITodoItem> = {
 	},
 };
 
-/** Validator for new todo items. */
+/** Validator for new todo items. User id omitted since it's set from session. */
 const newTodoItemValidator = Joi.object(
 	{
-		user_id: Joi.number().min(0).required(),
 		task: Joi.string().min(1).max(100).required(),
 		status: Joi.string().valid(...Object.values(TodoItemStatus)).required(),
 	}

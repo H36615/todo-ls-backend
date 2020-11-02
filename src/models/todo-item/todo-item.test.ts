@@ -20,7 +20,10 @@ describe("newTodoItemValidator", () => {
 	test("test that interface and validator have matching properties", () => {
 		// Arrange
 		const interfaceKeys = Object.values(todoItemDBModel.columns)
-			.filter(key => key !== todoItemDBModel.columns.id);
+			.filter(key =>
+				key !== todoItemDBModel.columns.id
+				// User id can also be omitted, since that value is set from session.
+				&& key !== todoItemDBModel.columns.user_id);
 		const validatorKeys = Object.keys(newTodoItemValidator.describe().keys);
 
 		// Act
@@ -29,102 +32,70 @@ describe("newTodoItemValidator", () => {
 
 	describe("validator", () => {
 		// -- Arrange
-		const validItems: Array<INewTodoItem> = [
+		const validItems: Array<Omit<INewTodoItem, "user_id">> = [
 			{
-				user_id: 1,
 				task: "a",
 				status: TodoItemStatus.done,
 			},
 			{
-				user_id: Number.MAX_SAFE_INTEGER,
-				task: "a",
-				status: TodoItemStatus.done,
-			},
-			{
-				user_id: 1,
 				task: Array(100).join("x"),
 				status: TodoItemStatus.done,
 			},
 
 			// task
 			{
-				user_id: 2,
-				task: "a",
+				task: "b",
 				status: TodoItemStatus.delayed,
 			},
 			{
-				user_id: 3,
-				task: "a",
+				task: "c",
 				status: TodoItemStatus.done,
 			},
 			{
-				user_id: 4,
-				task: "a",
+				task: "d",
 				status: TodoItemStatus.inProgres,
 			},
 			{
-				user_id: 5,
-				task: "a",
+				task: "e",
 				status: TodoItemStatus.todo,
 			},
 		];
-		const invalidItems: Array<INewTodoItem> = [
-			// user id
-			{
-				user_id: -1,
-				task: "a",
-				status: TodoItemStatus.done,
-			},
-			{
-				user_id: Number.MAX_SAFE_INTEGER + 1,
-				task: "a",
-				status: TodoItemStatus.done,
-			},
-			{
-				task: "a",
-				status: TodoItemStatus.done,
-			} as INewTodoItem,
-
+		const invalidItems: Array<Omit<INewTodoItem, "user_id">> = [
 			// task
 			{
-				user_id: 1,
 				task: "",
 				status: TodoItemStatus.done,
 			},
 			{
-				user_id: 2,
 				// 102 actually gives 101 ?
 				task: Array(102).join("x"),
 				status: TodoItemStatus.done,
 			},
 			{
-				user_id: 3,
 				status: TodoItemStatus.done,
-			} as INewTodoItem,
+			},
 
 			// status
 			{
-				user_id: 4,
 				task: "a",
-			} as INewTodoItem,
+			},
 			{
-				user_id: 5,
 				task: "a",
 				status: "definitelynotvalidstatus",
 			} as any,
 		];
 
 		// -- Act & Assert
-		validItems.forEach((item: INewTodoItem) => {
-			test("item (w/ id: " + item.user_id + ") should be rejected properly", () => {
+		validItems.forEach((item: Omit<INewTodoItem, "user_id">) => {
+			test("item (w/ task: " + item.task + ") should be rejected properly", () => {
 				return newTodoItemValidator.validateAsync(item)
 					.then(validatedValue => {
 						expect(validatedValue).toEqual(item);
 					});
 			});
 		});
-		invalidItems.forEach((item: INewTodoItem) => {
-			test("item (w/ id: " + item.user_id + ") should be rejected properly", () => {
+		invalidItems.forEach((item: Omit<INewTodoItem, "user_id">) => {
+			test("item (w/ task: " + item.task + ") should be rejected properly", () => {
 				return newTodoItemValidator.validateAsync(item)
 					.then(() => {
 						return Promise.reject("should have already been rejected");
