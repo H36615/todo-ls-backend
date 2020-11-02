@@ -3,7 +3,7 @@ import { ExpressTestHelpers, IReqMock } from "../../../testing/express-mocks";
 import { dBConfig } from "../../config/db-config";
 import { Logger } from "../../utils/logger/logger";
 import {
-	ITodoItem, todoItemDBModel, TodoItemStatus, todoItemValidator
+	ITodoItem, todoItemDBModel, TodoItemStatus, newTodoItemValidator
 } from "../../models/todo-item/todo-item";
 import { getResponseValue, ResponseType } from "../interfaces";
 import { addTodoItem, getAllTodoItems } from "./todo-item";
@@ -71,7 +71,7 @@ describe("addTodoItem", () => {
 
 		jest.spyOn(Logger, "error");
 		mockDBConfig(dBConfig, { value: "todo change this" });
-		jest.spyOn(todoItemValidator, "validateAsync").mockImplementation(
+		jest.spyOn(newTodoItemValidator, "validateAsync").mockImplementation(
 			(): Promise<string> => Promise.resolve(fakeValidatedValue)
 		);
 
@@ -84,7 +84,7 @@ describe("addTodoItem", () => {
 
 		// -- Assert
 		expect(Logger.error).not.toHaveBeenCalled();
-		expect(todoItemValidator.validateAsync).toHaveBeenCalledWith(reqMock.body);
+		expect(newTodoItemValidator.validateAsync).toHaveBeenCalledWith(reqMock.body);
 		expect(dBConfig).toHaveBeenCalledWith(todoItemDBModel.table);
 		expect(resMock.send).toHaveBeenCalledWith(
 			getResponseValue(ResponseType.OK)
@@ -98,7 +98,7 @@ describe("addTodoItem", () => {
 
 		jest.spyOn(Logger, "error");
 		mockDBConfig(dBConfig, error);
-		jest.spyOn(todoItemValidator, "validateAsync").mockImplementation(
+		jest.spyOn(newTodoItemValidator, "validateAsync").mockImplementation(
 			(): Promise<string> => Promise.resolve(fakeValidatedValue)
 		);
 
@@ -110,7 +110,7 @@ describe("addTodoItem", () => {
 		await addTodoItem(reqMock as any, resMock, nextSpy);
 
 		// -- Assert
-		expect(todoItemValidator.validateAsync).toHaveBeenCalledWith(reqMock.body);
+		expect(newTodoItemValidator.validateAsync).toHaveBeenCalledWith(reqMock.body);
 		expect(dBConfig).toHaveBeenCalledWith(todoItemDBModel.table);
 		expect(resMock.send).not.toHaveBeenCalled();
 		

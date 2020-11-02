@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { ValidationError } from "joi";
 import {
-	ITodoItem_IdLess, todoItemDBModel, TodoItemStatus, todoItemValidator
+	INewTodoItem, todoItemDBModel, TodoItemStatus, newTodoItemValidator
 } from "./todo-item";
 
 test("test that columns' key name and value match", () => {
@@ -16,12 +16,12 @@ test("test that columns' key name and value match", () => {
 	}
 });
 
-describe("validator", () => {
+describe("newTodoItemValidator", () => {
 	test("test that interface and validator have matching properties", () => {
 		// Arrange
 		const interfaceKeys = Object.values(todoItemDBModel.columns)
 			.filter(key => key !== todoItemDBModel.columns.id);
-		const validatorKeys = Object.keys(todoItemValidator.describe().keys);
+		const validatorKeys = Object.keys(newTodoItemValidator.describe().keys);
 
 		// Act
 		expect(interfaceKeys).toEqual(validatorKeys);
@@ -29,7 +29,7 @@ describe("validator", () => {
 
 	describe("validator", () => {
 		// -- Arrange
-		const validItems: Array<ITodoItem_IdLess> = [
+		const validItems: Array<INewTodoItem> = [
 			{
 				user_id: 1,
 				task: "a",
@@ -68,7 +68,7 @@ describe("validator", () => {
 				status: TodoItemStatus.todo,
 			},
 		];
-		const invalidItems: Array<ITodoItem_IdLess> = [
+		const invalidItems: Array<INewTodoItem> = [
 			// user id
 			{
 				user_id: -1,
@@ -83,7 +83,7 @@ describe("validator", () => {
 			{
 				task: "a",
 				status: TodoItemStatus.done,
-			} as ITodoItem_IdLess,
+			} as INewTodoItem,
 
 			// task
 			{
@@ -100,13 +100,13 @@ describe("validator", () => {
 			{
 				user_id: 3,
 				status: TodoItemStatus.done,
-			} as ITodoItem_IdLess,
+			} as INewTodoItem,
 
 			// status
 			{
 				user_id: 4,
 				task: "a",
-			} as ITodoItem_IdLess,
+			} as INewTodoItem,
 			{
 				user_id: 5,
 				task: "a",
@@ -115,17 +115,17 @@ describe("validator", () => {
 		];
 
 		// -- Act & Assert
-		validItems.forEach((item: ITodoItem_IdLess) => {
+		validItems.forEach((item: INewTodoItem) => {
 			test("item (w/ id: " + item.user_id + ") should be rejected properly", () => {
-				return todoItemValidator.validateAsync(item)
+				return newTodoItemValidator.validateAsync(item)
 					.then(validatedValue => {
 						expect(validatedValue).toEqual(item);
 					});
 			});
 		});
-		invalidItems.forEach((item: ITodoItem_IdLess) => {
+		invalidItems.forEach((item: INewTodoItem) => {
 			test("item (w/ id: " + item.user_id + ") should be rejected properly", () => {
-				return todoItemValidator.validateAsync(item)
+				return newTodoItemValidator.validateAsync(item)
 					.then(() => {
 						return Promise.reject("should have already been rejected");
 					})

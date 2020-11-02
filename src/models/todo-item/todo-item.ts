@@ -10,12 +10,12 @@ enum TodoItemStatus {
     delayed = "delayed",
 }
 
-interface ITodoItem_IdLess {
+interface INewTodoItem {
 	user_id: number,
     task: string,
     status: TodoItemStatus,
 }
-interface ITodoItem extends ITodoItem_IdLess {
+interface ITodoItem extends INewTodoItem {
 	id: number,
 }
 
@@ -29,7 +29,8 @@ const todoItemDBModel: IDatabaseModel<ITodoItem> = {
 	},
 };
 
-const todoItemValidator = Joi.object(
+/** Validator for new todo items. */
+const newTodoItemValidator = Joi.object(
 	{
 		user_id: Joi.number().min(0).required(),
 		task: Joi.string().min(1).max(100).required(),
@@ -39,8 +40,8 @@ const todoItemValidator = Joi.object(
 
 export {
 	ITodoItem,
-	ITodoItem_IdLess,
+	INewTodoItem,
 	TodoItemStatus,
 	todoItemDBModel,
-	todoItemValidator,
+	newTodoItemValidator,
 };

@@ -1,7 +1,7 @@
 import { dBConfig } from "../../config/db-config";
 import { Logger } from "../../utils/logger/logger";
 import {
-	ITodoItem, ITodoItem_IdLess, todoItemDBModel, todoItemValidator
+	ITodoItem, INewTodoItem, todoItemDBModel, newTodoItemValidator
 } from "../../models/todo-item/todo-item";
 import { getResponseValue, IController, ResponseType } from "../interfaces";
 
@@ -17,16 +17,17 @@ export const getAllTodoItems: IController = (req, res, next): Promise<void> => {
 export const addTodoItem: IController = (req, res, next): Promise<void> => {
 
 	// Validate param
-	return todoItemValidator.validateAsync(req.body).then((validatedValue: ITodoItem_IdLess) =>
+	return newTodoItemValidator.validateAsync(req.body)
+		.then((validatedValue: INewTodoItem) =>
 
-		// Add item
-		dBConfig(todoItemDBModel.table)
-			.insert(validatedValue)
-			.then(() => {
-				res.send(getResponseValue(ResponseType.OK));
-			})
-	).catch(error => {
-		Logger.error(error);
-		next(error);
-	});
+			// Add item
+			dBConfig(todoItemDBModel.table)
+				.insert(validatedValue)
+				.then(() => {
+					res.send(getResponseValue(ResponseType.OK));
+				})
+		).catch(error => {
+			Logger.error(error);
+			next(error);
+		});
 };
