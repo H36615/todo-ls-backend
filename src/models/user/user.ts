@@ -1,18 +1,22 @@
 import { IDatabaseModel } from "../interfaces";
 import Joi from "joi";
 
-interface IUser extends IUser_IdLess {
+interface IExistingUser extends INewUser {
 	id: number,
+	tag: number, // Number value to seperate users w/ identical usernames.
 }
 
-interface IUser_IdLess {
+/** User interface w/ some fields excluded not needed in new user context. */
+interface INewUser extends ILoginInformation {
 	username: string,
-	tag: number, // Number value to seperate users w/ identical usernames.
+}
+
+interface ILoginInformation {
 	email: string,
 	password: string,
 }
 
-const userDBModel: IDatabaseModel<IUser> = {
+const userDBModel: IDatabaseModel<IExistingUser> = {
 	table: "user",
 	columns: {
 		id: "id",
@@ -23,18 +27,29 @@ const userDBModel: IDatabaseModel<IUser> = {
 	},
 };
 
-const userValidator = Joi.object(
+// Uncomment if needed.
+// const tagValidator = Joi.number().min(0).max(Number.MAX_VALUE).required();
+const emailValidator = Joi.string().email().required();
+const passwordValidator = Joi.string().min(6).required();
+const newUserValidator = Joi.object(
 	{
 		username: Joi.string().min(1).max(32).required(),
-		tag: Joi.number().min(0).max(Number.MAX_VALUE).required(),
-		email: Joi.string().email().required(),
-		password: Joi.string().min(6).required(),
+		email: emailValidator,
+		password: passwordValidator,
+	}
+);
+const loginInformationValidator = Joi.object(
+	{
+		email: emailValidator,
+		password: passwordValidator,
 	}
 );
 
 export {
-	IUser,
-	IUser_IdLess,
+	IExistingUser,
+	INewUser,
+	ILoginInformation,
 	userDBModel,
-	userValidator
+	newUserValidator,
+	loginInformationValidator,
 };

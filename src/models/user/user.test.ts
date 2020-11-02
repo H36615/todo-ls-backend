@@ -8,3 +8,7 @@ test("test that interface matches joi validator", () => {
 	throw new Error("Not implemented");
 });
 
+test("test joi validation", () => {
+	throw new Error("Not implemented");
+});
+

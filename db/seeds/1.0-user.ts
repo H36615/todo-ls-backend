@@ -1,7 +1,7 @@
 // Generated with 'npx knex seed:make <table-name>>'.
 
 import * as Knex from "knex";
-import { IUser, userDBModel } from "../../src/models/user/user";
+import { IExistingUser, userDBModel } from "../../src/models/user/user";
 
 const userData1Id = 0;
 
@@ -11,14 +11,14 @@ export async function seed(knex: Knex): Promise<void> {
     
 	// -- Inserts seed entries
 
-	const userData1: IUser = {
+	const userData1: IExistingUser = {
 		id: userData1Id,
 		username: "Testman99",
 		tag: 0,
 		email: "testman@domain.net",
 		password: "testman",
 	};
-	const userData2: IUser = {
+	const userData2: IExistingUser = {
 		id: 1,
 		username: "DevguY",
 		tag: 0,

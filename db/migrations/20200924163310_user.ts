@@ -7,7 +7,7 @@ export async function up(knex: Knex): Promise<void> {
 		table => {
 			table.increments(userDBModel.columns.id).primary();
 			table.text(userDBModel.columns.username).notNullable();
-			table.text(userDBModel.columns.tag).notNullable();
+			table.integer(userDBModel.columns.tag).notNullable();
 			table.text(userDBModel.columns.email).unique().notNullable();
 			table.text(userDBModel.columns.password).notNullable();
 		},
