@@ -1,63 +1,50 @@
 
 import passportConfig from "passport";
-import { ExtractJwt, Strategy as JWTStrategy, VerifiedCallback } from "passport-jwt";
-import * as dotenv from "dotenv";
-dotenv.config({ path: __dirname + "/../../.env" });
+import { Strategy as LocalStrategy } from "passport-local";
+import { userDBModel } from "../models/user/user";
+import { UserUtils } from "../utils/user/user";
 
-interface ILoginPayload {
-	user: string,
-	userPassword: string,
-}
-
-const secret = process.env.JWT_SECRET;
-const authorizationHeaderName: string = process.env.AUTHORIZATION_HEADER_NAME || "";
 const passportStrategies: { [key: string]: string; } = {
+	login: "login",
 	user: "user",
 };
 
-checkEnviromentVariables();
+passportConfig.serializeUser((user, done) => {
+	done(null, user);
+});
+
+/** Login id: e.g. email. */
+passportConfig.deserializeUser((loginId, done) => {
+	done(null, loginId);
+});
 
 passportConfig.use(
-	passportStrategies.user,
-	new JWTStrategy(
+	passportStrategies.login,
+	new LocalStrategy(
 		{
-			secretOrKey: secret,
-			jwtFromRequest: ExtractJwt.fromHeader(authorizationHeaderName),
+			// DB model is used because it's modelled after its interafce properties.
+			usernameField: userDBModel.columns.email,
+			passwordField: userDBModel.columns.password,
 		},
-		(payload: ILoginPayload, done: VerifiedCallback) => {
-
-			if (userIsAuthorized(payload))
-				return done(null, true);
-
-			return createError(done, "other error");
+		(email: string, password: string, done) => {
+			UserUtils.isAuthenticatedWithLoginInfo({ email: email, password: password })
+				.then((loginId: string) => {
+					return done(null, loginId);
+					// Next, should set the browser cookie through 'passportConfig.serializeUser'
+					// using the argument inside done() (if session is enabled).
+					// And then continue the route.
+				})
+				.catch(error => {
+					return createError(done, error);
+				});
 		}
 	)
 );
 
-// TODO remove eslint-disabler after implementation.
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
-function userIsAuthorized(loginPayload: ILoginPayload): boolean {
-	// TODO implement.
-	// TODO test.
-
-	if (loginPayload.user && loginPayload.userPassword) {
-		return true;
-	}
-
-	return false;
-}
-
-function createError(done: VerifiedCallback, errorMessage: string) {
+// Passport did not provide type.
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+function createError(done: any, errorMessage: string) {
 	return done(errorMessage, false);
-}
-
-/** Check that env variables hold values */
-function checkEnviromentVariables() {
-	if (secret == undefined || authorizationHeaderName == undefined)
-		throw new Error("secret enviroment variable missing");
-
-	if (authorizationHeaderName == "")
-		throw new Error("authorization header enviroment variable missing");
 }
 
 export { passportConfig, passportStrategies };

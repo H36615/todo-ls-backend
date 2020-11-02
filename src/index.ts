@@ -2,11 +2,27 @@
 
 import express from "express";
 import { authenticatedApi, publicApi } from "./api/index";
+import expressSession from "express-session";
+import { passportConfig } from "./config/passport-config";
+import { Enviroment, EnviromentUtils } from "./utils/enviroment/enviroment";
 
 const port = 3000;
 const app = express();
 
+// NOTE: Order matters.
 app.use(express.json());
+app.use(expressSession({
+	secret: EnviromentUtils.getValidatedSessionSecret(),
+	resave: false,
+	saveUninitialized: true,
+	cookie: {
+		// With 'true' cookie is sent only in https (not http).
+		secure: EnviromentUtils.getValidatedEnviroment() === Enviroment.production,
+		maxAge: 1000 * 60 * 60 * 24 * 1 // value in milliseconds
+	},
+}));
+app.use(passportConfig.initialize());
+app.use(passportConfig.session());
 app.use("/", publicApi);
 app.use("/auth", authenticatedApi);
 
