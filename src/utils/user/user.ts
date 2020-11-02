@@ -10,7 +10,7 @@ import { NextFunction, Request, Response } from "express";
 export class UserUtils {
 
 	/**
-	 * Get users from DB by given username.
+	 * Get users from DB by given params.
 	 */
 	private static getUsersFromDB(username: string, tag?: number): Promise<IExistingUser[]> {
 		if (tag != undefined) {

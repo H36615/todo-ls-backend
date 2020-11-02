@@ -6,7 +6,6 @@ import { UserUtils } from "../utils/user/user";
 
 const passportStrategies: { [key: string]: string; } = {
 	login: "login",
-	user: "user",
 };
 
 passportConfig.serializeUser((user, done) => {

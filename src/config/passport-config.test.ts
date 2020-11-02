@@ -1,50 +1,38 @@
 
-import { Strategy as JWTStrategy } from "passport-jwt";
+import { Strategy as LocalStrategy } from "passport-local";
+import passportConfig from "passport";
 
-function mockPassport(useSpy: jest.Mock | undefined): void {
-	jest.doMock(
-		"passport",
-		() => {
-			if (useSpy == undefined) throw new Error("use spy missing");
+test("no spy should be called without the test entity", () => {
 
-			return {
-				use: useSpy
-			};
-		}
+	// Arrange
+	jest.spyOn(passportConfig, "use");
+	jest.spyOn(passportConfig, "serializeUser");
+	jest.spyOn(passportConfig, "deserializeUser");
+
+	// Assert
+	expect(passportConfig.serializeUser).not.toHaveBeenCalled();
+	expect(passportConfig.deserializeUser).not.toHaveBeenCalled();
+});
+
+test("passport should be set up", () => {
+
+	// Arrange
+	jest.spyOn(passportConfig, "use");
+	jest.spyOn(passportConfig, "serializeUser");
+	jest.spyOn(passportConfig, "deserializeUser");
+
+	// Act
+	require("./passport-config");
+
+	// Assert
+	expect(passportConfig.serializeUser).toHaveBeenCalledWith(
+		expect.any(Function),
 	);
-}
-
-describe("strategies", () => {
-
-	test("no spy should be called without the test entity", () => {
-
-		// Arrange
-		const useSpy = jest.fn();
-		mockPassport(useSpy);
-
-		// Assert
-		expect(useSpy).not.toHaveBeenCalled();
-	});
-
-	test("'user' strategy should be configured", () => {
-
-		// Arrange
-		const useSpy = jest.fn();
-		mockPassport(useSpy);
-
-		// Act
-		require("./passport-config");
-
-		// Assert
-		expect(useSpy).toHaveBeenCalledWith(
-			"user",
-			expect.any(JWTStrategy),
-		);
-	});
+	expect(passportConfig.deserializeUser).toHaveBeenCalledWith(
+		expect.any(Function),
+	);
+	expect(passportConfig.use).toHaveBeenCalledWith(
+		"login",
+		expect.any(LocalStrategy),
+	);
 });
-
-
-test("authorization", () => {
-	throw new Error("not implemented");
-});
-
