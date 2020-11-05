@@ -24,4 +24,8 @@ describe("user utils", () => {
 	test("sessionIsAuthenticated", () => {
 		throw new Error("not implemented");
 	});
+
+	test("getUserIdFromSession", () => {
+		throw new Error("not implemented");
+	});
 });

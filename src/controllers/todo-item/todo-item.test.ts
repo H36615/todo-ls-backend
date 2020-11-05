@@ -7,6 +7,7 @@ import {
 } from "../../models/todo-item/todo-item";
 import { getResponseValue, ResponseType } from "../interfaces";
 import { addTodoItem, getAllTodoItems } from "./todo-item";
+import { UserUtils } from "../../utils/user/user";
 /* eslint-disable @typescript-eslint/no-explicit-any */
 
 jest.mock("../../config/db-config");
@@ -68,11 +69,15 @@ describe("addTodoItem", () => {
 	test("should add properly", async () => {
 		// -- Arrange
 		const fakeValidatedValue = "fake validated value";
+		const fakeUserId = 321;
 
 		jest.spyOn(Logger, "error");
 		mockDBConfig(dBConfig, { value: "todo change this" });
 		jest.spyOn(newTodoItemValidator, "validateAsync").mockImplementation(
 			(): Promise<string> => Promise.resolve(fakeValidatedValue)
+		);
+		jest.spyOn(UserUtils, "getUserIdFromSession").mockImplementation(
+			(): Promise<number> => Promise.resolve(fakeUserId)
 		);
 
 		const nextSpy: any = jest.fn();
@@ -89,17 +94,22 @@ describe("addTodoItem", () => {
 		expect(resMock.send).toHaveBeenCalledWith(
 			getResponseValue(ResponseType.OK)
 		);
+		expect(UserUtils.getUserIdFromSession).toHaveBeenCalledWith(reqMock);
 	});
 
-	test("should catch error properly", async () => {
+	test("should catch error properly on db error", async () => {
 		// -- Arrange
 		const fakeValidatedValue = "fake validated value";
 		const error = new Error("rejecty 2");
+		const fakeUserId = 321;
 
 		jest.spyOn(Logger, "error");
 		mockDBConfig(dBConfig, error);
 		jest.spyOn(newTodoItemValidator, "validateAsync").mockImplementation(
 			(): Promise<string> => Promise.resolve(fakeValidatedValue)
+		);
+		jest.spyOn(UserUtils, "getUserIdFromSession").mockImplementation(
+			(): Promise<number> => Promise.resolve(fakeUserId)
 		);
 
 		const nextSpy: any = jest.fn();
@@ -113,8 +123,16 @@ describe("addTodoItem", () => {
 		expect(newTodoItemValidator.validateAsync).toHaveBeenCalledWith(reqMock.body);
 		expect(dBConfig).toHaveBeenCalledWith(todoItemDBModel.table);
 		expect(resMock.send).not.toHaveBeenCalled();
-		
 		expect(Logger.error).toHaveBeenCalledWith(error);
 		expect(nextSpy).toHaveBeenCalledWith(error);
+		expect(UserUtils.getUserIdFromSession).toHaveBeenCalledWith(reqMock);
+	});
+
+	test("should catch error on validation", async () => {
+		throw new Error("not implemented");
+	});
+
+	test("should catch error on user id session authentication", async () => {
+		throw new Error("not implemented");
 	});
 });

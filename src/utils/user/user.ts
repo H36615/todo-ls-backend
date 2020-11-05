@@ -145,4 +145,15 @@ export class UserUtils {
 		else
 			next(new Error("User authentication failed"));
 	}
+
+	public static getUserIdFromSession(req: Request): Promise<number> {
+		const userId = (req.user as IExistingUser)?.id;
+		if (userId == undefined) {
+			const errorMessage = "user id not found from the session";
+			Logger.error(errorMessage);
+			return Promise.reject(errorMessage);
+		}
+
+		return Promise.resolve(userId);
+	}
 }
