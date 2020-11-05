@@ -3,7 +3,7 @@ import { ExpressTestHelpers, IReqMock } from "../../../testing/express-mocks";
 import { dBConfig } from "../../config/db-config";
 import { Logger } from "../../utils/logger/logger";
 import {
-	ITodoItem, todoItemDBModel, TodoItemStatus, newTodoItemValidator
+	ITodoItem, todoItemDBModel, TodoItemStatus, newTodoItemValidator, INewTodoItem
 } from "../../models/todo-item/todo-item";
 import { getResponseValue, ResponseType } from "../interfaces";
 import { addTodoItem, getAllTodoItems } from "./todo-item";
@@ -30,38 +30,67 @@ describe("getAllTodoItems", () => {
 				user_id: 21,
 			}
 		];
+		const filteredResponseMock = responseMock.map(
+			(row: ITodoItem) => {
+				const mapItem: Pick<INewTodoItem, "task" | "status"> = {
+					task: row.task,
+					status: row.status,
+				};
+				return mapItem;
+			}
+		);
+		const fakeUserId = 123;
+		const reqMock: IReqMock = { body: { anything: "yes" } };
+		const resMock = ExpressTestHelpers.createResMock();
+		const nextSpy: any = jest.fn();
 
 		jest.spyOn(Logger, "error");
+		jest.spyOn(UserUtils, "getUserIdFromSession").mockImplementation(
+			(): Promise<number> => Promise.resolve(fakeUserId)
+		);
 		mockDBConfig(dBConfig, responseMock);
-		const resMock = ExpressTestHelpers.createResMock();
 
 		// -- Act
-		await getAllTodoItems({} as any, resMock, {} as any);
+		await getAllTodoItems(reqMock as any, resMock, nextSpy);
 
 		// -- Assert
 		expect(Logger.error).not.toHaveBeenCalled();
 		// TODO
 		// expect(dBConfig.select).toHaveBeenCalledWith(...);
-		expect(resMock.send).toHaveBeenCalledWith(responseMock);
+		expect(resMock.send).toHaveBeenCalledWith(filteredResponseMock);
+		expect(UserUtils.getUserIdFromSession).toHaveBeenCalledWith(reqMock);
 	});
 
-	test("should catch error properly", async () => {
+	test("should catch error properly on db error", async () => {
 		// -- Arrange
 		const error = new Error("rejecty");
+		const fakeUserId = 123;
+		const nextSpy: any = jest.fn();
 
 		jest.spyOn(Logger, "error");
+		jest.spyOn(UserUtils, "getUserIdFromSession").mockImplementation(
+			(): Promise<number> => Promise.resolve(fakeUserId)
+		);
 		mockDBConfig(dBConfig, error);
-		const nextSpy: any = jest.fn();
 
 		// -- Act
 		await getAllTodoItems({} as any, {} as any, nextSpy);
 
 		// -- Assert
+		expect(UserUtils.getUserIdFromSession).toHaveBeenCalled();
 		expect(dBConfig).toHaveBeenCalledWith(todoItemDBModel.table);
 		// TODO
 		// expect(dBConfig.select).not.toHaveBeenCalled();
 		expect(Logger.error).toHaveBeenCalledWith(error);
 		expect(nextSpy).toHaveBeenCalledWith(error);
+	});
+
+	test("should catch error on validation", async () => {
+		throw new Error("not implemented");
+	});
+
+	test("should catch error on user id session authentication", async () => {
+		throw new Error("not implemented");
 	});
 });
 

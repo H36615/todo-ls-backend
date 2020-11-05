@@ -17,6 +17,10 @@ function mockDBConfig(dBConfig: knex, response: Record<string, any> | Error): vo
 			(response instanceof Error)
 				? Promise.reject(response)
 				: Promise.resolve(response),
+		where: () =>
+			(response instanceof Error)
+				? Promise.reject(response)
+				: Promise.resolve(response),
 	}));
 }
 

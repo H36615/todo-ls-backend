@@ -7,23 +7,46 @@ import { getResponseValue, IController, ResponseType } from "../interfaces";
 import { UserUtils } from "../../utils/user/user";
 
 export const getAllTodoItems: IController = (req, res, next): Promise<void> => {
-	return dBConfig(todoItemDBModel.table).select("*").then((rows: ITodoItem[]) => {
-		res.send(rows);
-	}).catch(err => {
-		Logger.error(err);
-		next(err);
-	});
+	return UserUtils.getUserIdFromSession(req)
+		.then((userId: number) => {
+
+			const userIdObject: Pick<INewTodoItem, "user_id"> = {
+				user_id: userId,
+			};
+
+			return dBConfig(todoItemDBModel.table)
+				.where(userIdObject);
+		})
+		.then((rows: ITodoItem[]) => {
+			res.send(
+				// Filter out unneeded fields.
+				rows.map(
+					(row: ITodoItem) => {
+						const mapItem: Pick<INewTodoItem, "task" | "status"> = {
+							task: row.task,
+							status: row.status,
+						};
+						return mapItem;
+					}
+				)
+			);
+		})
+		.catch(err => {
+			Logger.error(err);
+			next(err);
+		});
 };
 
 export const addTodoItem: IController = (req, res, next): Promise<void> => {
 	let userId: number;
 
-	return UserUtils.getUserIdFromSession(req).then((_userId: number) => {
-		userId = _userId;
+	return UserUtils.getUserIdFromSession(req)
+		.then((_userId: number) => {
+			userId = _userId;
 
-		// Validate param
-		return newTodoItemValidator.validateAsync(req.body);
-	})
+			// Validate param
+			return newTodoItemValidator.validateAsync(req.body);
+		})
 		.then((validatedValue: Omit<INewTodoItem, "user_id">) => {
 
 			const todoItem: INewTodoItem = {
