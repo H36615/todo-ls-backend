@@ -7,7 +7,7 @@ import {
 } from "../../models/todo-item/todo-item";
 import { getResponseValue, ResponseType } from "../interfaces";
 import { addTodoItem, getAllTodoItems } from "./todo-item";
-import { UserUtils } from "../../utils/user/user";
+import { AuthUtils } from "../../utils/user/user";
 /* eslint-disable @typescript-eslint/no-explicit-any */
 
 jest.mock("../../config/db-config");
@@ -45,7 +45,7 @@ describe("getAllTodoItems", () => {
 		const nextSpy: any = jest.fn();
 
 		jest.spyOn(Logger, "error");
-		jest.spyOn(UserUtils, "getUserIdFromSession").mockImplementation(
+		jest.spyOn(AuthUtils, "getUserIdFromSession").mockImplementation(
 			(): Promise<number> => Promise.resolve(fakeUserId)
 		);
 		mockDBConfig(dBConfig, responseMock);
@@ -58,7 +58,7 @@ describe("getAllTodoItems", () => {
 		// TODO
 		// expect(dBConfig.select).toHaveBeenCalledWith(...);
 		expect(resMock.send).toHaveBeenCalledWith(filteredResponseMock);
-		expect(UserUtils.getUserIdFromSession).toHaveBeenCalledWith(reqMock);
+		expect(AuthUtils.getUserIdFromSession).toHaveBeenCalledWith(reqMock);
 	});
 
 	test("should catch error properly on db error", async () => {
@@ -68,7 +68,7 @@ describe("getAllTodoItems", () => {
 		const nextSpy: any = jest.fn();
 
 		jest.spyOn(Logger, "error");
-		jest.spyOn(UserUtils, "getUserIdFromSession").mockImplementation(
+		jest.spyOn(AuthUtils, "getUserIdFromSession").mockImplementation(
 			(): Promise<number> => Promise.resolve(fakeUserId)
 		);
 		mockDBConfig(dBConfig, error);
@@ -77,7 +77,7 @@ describe("getAllTodoItems", () => {
 		await getAllTodoItems({} as any, {} as any, nextSpy);
 
 		// -- Assert
-		expect(UserUtils.getUserIdFromSession).toHaveBeenCalled();
+		expect(AuthUtils.getUserIdFromSession).toHaveBeenCalled();
 		expect(dBConfig).toHaveBeenCalledWith(todoItemDBModel.table);
 		// TODO
 		// expect(dBConfig.select).not.toHaveBeenCalled();
@@ -105,7 +105,7 @@ describe("addTodoItem", () => {
 		jest.spyOn(newTodoItemValidator, "validateAsync").mockImplementation(
 			(): Promise<string> => Promise.resolve(fakeValidatedValue)
 		);
-		jest.spyOn(UserUtils, "getUserIdFromSession").mockImplementation(
+		jest.spyOn(AuthUtils, "getUserIdFromSession").mockImplementation(
 			(): Promise<number> => Promise.resolve(fakeUserId)
 		);
 
@@ -123,7 +123,7 @@ describe("addTodoItem", () => {
 		expect(resMock.send).toHaveBeenCalledWith(
 			getResponseValue(ResponseType.OK)
 		);
-		expect(UserUtils.getUserIdFromSession).toHaveBeenCalledWith(reqMock);
+		expect(AuthUtils.getUserIdFromSession).toHaveBeenCalledWith(reqMock);
 	});
 
 	test("should catch error properly on db error", async () => {
@@ -137,7 +137,7 @@ describe("addTodoItem", () => {
 		jest.spyOn(newTodoItemValidator, "validateAsync").mockImplementation(
 			(): Promise<string> => Promise.resolve(fakeValidatedValue)
 		);
-		jest.spyOn(UserUtils, "getUserIdFromSession").mockImplementation(
+		jest.spyOn(AuthUtils, "getUserIdFromSession").mockImplementation(
 			(): Promise<number> => Promise.resolve(fakeUserId)
 		);
 
@@ -154,7 +154,7 @@ describe("addTodoItem", () => {
 		expect(resMock.send).not.toHaveBeenCalled();
 		expect(Logger.error).toHaveBeenCalledWith(error);
 		expect(nextSpy).toHaveBeenCalledWith(error);
-		expect(UserUtils.getUserIdFromSession).toHaveBeenCalledWith(reqMock);
+		expect(AuthUtils.getUserIdFromSession).toHaveBeenCalledWith(reqMock);
 	});
 
 	test("should catch error on validation", async () => {

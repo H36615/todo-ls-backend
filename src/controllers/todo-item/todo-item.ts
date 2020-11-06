@@ -4,10 +4,10 @@ import {
 	ITodoItem, INewTodoItem, todoItemDBModel, newTodoItemValidator
 } from "../../models/todo-item/todo-item";
 import { getResponseValue, IController, ResponseType } from "../interfaces";
-import { UserUtils } from "../../utils/user/user";
+import { AuthUtils } from "../../utils/user/user";
 
 export const getAllTodoItems: IController = (req, res, next): Promise<void> => {
-	return UserUtils.getUserIdFromSession(req)
+	return AuthUtils.getUserIdFromSession(req)
 		.then((userId: number) => {
 
 			const userIdObject: Pick<INewTodoItem, "user_id"> = {
@@ -40,7 +40,7 @@ export const getAllTodoItems: IController = (req, res, next): Promise<void> => {
 export const addTodoItem: IController = (req, res, next): Promise<void> => {
 	let userId: number;
 
-	return UserUtils.getUserIdFromSession(req)
+	return AuthUtils.getUserIdFromSession(req)
 		.then((_userId: number) => {
 			userId = _userId;
 

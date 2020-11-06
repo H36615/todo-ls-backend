@@ -3,7 +3,8 @@ import passportConfig from "passport";
 import { Strategy as LocalStrategy } from "passport-local";
 import { IExistingUser, userDBModel } from "../models/user/user";
 import { Logger } from "../utils/logger/logger";
-import { UserUtils } from "../utils/user/user";
+import { AuthUtils } from "../utils/user/user";
+import { UserDA } from "../data-access/user/user";
 
 const passportStrategies: { [key: string]: string; } = {
 	login: "login",
@@ -16,7 +17,7 @@ passportConfig.serializeUser((userId, done) => {
 /** Deserialize info from cookie, and set user info to 'req' */
 passportConfig.deserializeUser((userId, done) => {
 	// Cast to number, it's validated anywy.
-	UserUtils.getUserFromDBByUserId(userId as number)
+	UserDA.getUserFromDBByUserId(userId as number)
 		.then((user: IExistingUser) => {
 			done(null, user);
 		})
@@ -35,7 +36,7 @@ passportConfig.use(
 			passwordField: userDBModel.columns.password,
 		},
 		(email: string, password: string, done) => {
-			UserUtils.isAuthenticatedWithLoginInfo({ email: email, password: password })
+			AuthUtils.isAuthenticatedWithLoginInfo({ email: email, password: password })
 				.then((userId: number) => {
 					return done(null, userId);
 					// Next, should set the browser cookie through 'passportConfig.serializeUser'
