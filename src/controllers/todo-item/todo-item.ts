@@ -1,35 +1,18 @@
-import { dBConfig } from "../../config/db-config";
 import { Logger } from "../../utils/logger/logger";
 import {
-	ITodoItem, INewTodoItem, todoItemDBModel, newTodoItemValidator
+	INewTodoItem, newTodoItemValidator
 } from "../../models/todo-item/todo-item";
 import { getResponseValue, IController, ResponseType } from "../interfaces";
 import { AuthUtils } from "../../utils/user/user";
+import { TodoItemDA } from "../../data-access/todo-item/todo-item";
 
 export const getAllTodoItems: IController = (req, res, next): Promise<void> => {
 	return AuthUtils.getUserIdFromSession(req)
 		.then((userId: number) => {
-
-			const userIdObject: Pick<INewTodoItem, "user_id"> = {
-				user_id: userId,
-			};
-
-			return dBConfig(todoItemDBModel.table)
-				.where(userIdObject);
+			return TodoItemDA.getAllMapped(userId);
 		})
-		.then((rows: ITodoItem[]) => {
-			res.send(
-				// Filter out unneeded fields.
-				rows.map(
-					(row: ITodoItem) => {
-						const mapItem: Pick<INewTodoItem, "task" | "status"> = {
-							task: row.task,
-							status: row.status,
-						};
-						return mapItem;
-					}
-				)
-			);
+		.then((rows: Pick<INewTodoItem, "task" | "status">[]) => {
+			res.send(rows);
 		})
 		.catch(err => {
 			Logger.error(err);
@@ -48,15 +31,7 @@ export const addTodoItem: IController = (req, res, next): Promise<void> => {
 			return newTodoItemValidator.validateAsync(req.body);
 		})
 		.then((validatedValue: Omit<INewTodoItem, "user_id">) => {
-
-			const todoItem: INewTodoItem = {
-				...validatedValue,
-				user_id: userId
-			};
-
-			// Add item
-			return dBConfig(todoItemDBModel.table)
-				.insert(todoItem);
+			return TodoItemDA.addNew({ ...validatedValue, user_id: userId });
 		})
 		.then(() => {
 			res.send(getResponseValue(ResponseType.OK));

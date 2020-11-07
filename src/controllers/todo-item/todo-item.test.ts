@@ -1,16 +1,14 @@
-import { mockDBConfig } from "../../../testing/db-mocks";
 import { ExpressTestHelpers, IReqMock } from "../../../testing/express-mocks";
-import { dBConfig } from "../../config/db-config";
 import { Logger } from "../../utils/logger/logger";
 import {
-	ITodoItem, todoItemDBModel, TodoItemStatus, newTodoItemValidator, INewTodoItem
+	ITodoItem, TodoItemStatus, newTodoItemValidator, INewTodoItem
 } from "../../models/todo-item/todo-item";
 import { getResponseValue, ResponseType } from "../interfaces";
 import { addTodoItem, getAllTodoItems } from "./todo-item";
 import { AuthUtils } from "../../utils/user/user";
+import { TodoItemDA } from "../../data-access/todo-item/todo-item";
 /* eslint-disable @typescript-eslint/no-explicit-any */
 
-jest.mock("../../config/db-config");
 jest.mock("../../models/todo-item/todo-item");
 
 describe("getAllTodoItems", () => {
@@ -48,48 +46,46 @@ describe("getAllTodoItems", () => {
 		jest.spyOn(AuthUtils, "getUserIdFromSession").mockImplementation(
 			(): Promise<number> => Promise.resolve(fakeUserId)
 		);
-		mockDBConfig(dBConfig, responseMock);
+		jest.spyOn(TodoItemDA, "getAllMapped").mockImplementation(
+			(): Promise<Pick<INewTodoItem, "task" | "status">[]> =>
+				Promise.resolve(filteredResponseMock)
+		);
 
 		// -- Act
 		await getAllTodoItems(reqMock as any, resMock, nextSpy);
 
 		// -- Assert
 		expect(Logger.error).not.toHaveBeenCalled();
-		// TODO
-		// expect(dBConfig.select).toHaveBeenCalledWith(...);
 		expect(resMock.send).toHaveBeenCalledWith(filteredResponseMock);
 		expect(AuthUtils.getUserIdFromSession).toHaveBeenCalledWith(reqMock);
 	});
 
-	test("should catch error properly on db error", async () => {
-		// -- Arrange
-		const error = new Error("rejecty");
+	test("should catch data access error properly", async () => {
+
 		const fakeUserId = 123;
+		const error = new Error("rejecty");
+		const reqMock: IReqMock = { body: { anything: "yes" } };
+		const resMock = ExpressTestHelpers.createResMock();
 		const nextSpy: any = jest.fn();
 
 		jest.spyOn(Logger, "error");
 		jest.spyOn(AuthUtils, "getUserIdFromSession").mockImplementation(
 			(): Promise<number> => Promise.resolve(fakeUserId)
 		);
-		mockDBConfig(dBConfig, error);
+		jest.spyOn(TodoItemDA, "getAllMapped").mockImplementation(
+			(): Promise<Pick<INewTodoItem, "task" | "status">[]> =>
+				Promise.reject(error)
+		);
 
-		// -- Act
-		await getAllTodoItems({} as any, {} as any, nextSpy);
+		await getAllTodoItems(reqMock as any, resMock, nextSpy);
 
-		// -- Assert
-		expect(AuthUtils.getUserIdFromSession).toHaveBeenCalled();
-		expect(dBConfig).toHaveBeenCalledWith(todoItemDBModel.table);
-		// TODO
-		// expect(dBConfig.select).not.toHaveBeenCalled();
+		expect(AuthUtils.getUserIdFromSession).toHaveBeenCalledWith(reqMock);
+		expect(TodoItemDA.getAllMapped).toHaveBeenCalledWith(fakeUserId);
 		expect(Logger.error).toHaveBeenCalledWith(error);
 		expect(nextSpy).toHaveBeenCalledWith(error);
 	});
 
-	test("should catch error on validation", async () => {
-		throw new Error("not implemented");
-	});
-
-	test("should catch error on user id session authentication", async () => {
+	test("should catch user id session authentication error properly", async () => {
 		throw new Error("not implemented");
 	});
 });
@@ -97,16 +93,21 @@ describe("getAllTodoItems", () => {
 describe("addTodoItem", () => {
 	test("should add properly", async () => {
 		// -- Arrange
-		const fakeValidatedValue = "fake validated value";
+		const fakeValidatedValue: Omit<INewTodoItem, "user_id"> = {
+			task: "tasky",
+			status: TodoItemStatus.done,
+		};
 		const fakeUserId = 321;
 
 		jest.spyOn(Logger, "error");
-		mockDBConfig(dBConfig, { value: "todo change this" });
-		jest.spyOn(newTodoItemValidator, "validateAsync").mockImplementation(
-			(): Promise<string> => Promise.resolve(fakeValidatedValue)
-		);
 		jest.spyOn(AuthUtils, "getUserIdFromSession").mockImplementation(
 			(): Promise<number> => Promise.resolve(fakeUserId)
+		);
+		jest.spyOn(newTodoItemValidator, "validateAsync").mockImplementation(
+			(): Promise<Omit<INewTodoItem, "user_id">> => Promise.resolve(fakeValidatedValue)
+		);
+		jest.spyOn(TodoItemDA, "addNew").mockImplementation(
+			(): Promise<void> => Promise.resolve()
 		);
 
 		const nextSpy: any = jest.fn();
@@ -119,26 +120,33 @@ describe("addTodoItem", () => {
 		// -- Assert
 		expect(Logger.error).not.toHaveBeenCalled();
 		expect(newTodoItemValidator.validateAsync).toHaveBeenCalledWith(reqMock.body);
-		expect(dBConfig).toHaveBeenCalledWith(todoItemDBModel.table);
+		expect(TodoItemDA.addNew).toHaveBeenCalledWith(
+			{ ...fakeValidatedValue, user_id: fakeUserId }
+		);
 		expect(resMock.send).toHaveBeenCalledWith(
 			getResponseValue(ResponseType.OK)
 		);
 		expect(AuthUtils.getUserIdFromSession).toHaveBeenCalledWith(reqMock);
 	});
 
-	test("should catch error properly on db error", async () => {
+	test("should catch data access error properly on", async () => {
 		// -- Arrange
-		const fakeValidatedValue = "fake validated value";
+		const fakeValidatedValue: Omit<INewTodoItem, "user_id"> = {
+			task: "tasky",
+			status: TodoItemStatus.done,
+		};
 		const error = new Error("rejecty 2");
 		const fakeUserId = 321;
 
 		jest.spyOn(Logger, "error");
-		mockDBConfig(dBConfig, error);
 		jest.spyOn(newTodoItemValidator, "validateAsync").mockImplementation(
-			(): Promise<string> => Promise.resolve(fakeValidatedValue)
+			(): Promise<Omit<INewTodoItem, "user_id">> => Promise.resolve(fakeValidatedValue)
 		);
 		jest.spyOn(AuthUtils, "getUserIdFromSession").mockImplementation(
 			(): Promise<number> => Promise.resolve(fakeUserId)
+		);
+		jest.spyOn(TodoItemDA, "addNew").mockImplementation(
+			(): Promise<void> => Promise.reject(error)
 		);
 
 		const nextSpy: any = jest.fn();
@@ -150,7 +158,9 @@ describe("addTodoItem", () => {
 
 		// -- Assert
 		expect(newTodoItemValidator.validateAsync).toHaveBeenCalledWith(reqMock.body);
-		expect(dBConfig).toHaveBeenCalledWith(todoItemDBModel.table);
+		expect(TodoItemDA.addNew).toHaveBeenCalledWith(
+			{ ...fakeValidatedValue, user_id: fakeUserId }
+		);
 		expect(resMock.send).not.toHaveBeenCalled();
 		expect(Logger.error).toHaveBeenCalledWith(error);
 		expect(nextSpy).toHaveBeenCalledWith(error);
