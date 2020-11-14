@@ -1,0 +1,27 @@
+
+name: todo-ls-backend
+on:
+  push:
+    branches:
+      - develop
+jobs:
+  # Using single job since the phases are dependent on build phase
+  build_test_and_deploy:
+    runs-on: ubuntu-latest
+    steps:
+      # -- Build phase
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Build docker image(s)
+        run: bash build.sh
+
+      - name: Run lint
+        run: docker run todo-ls-backend npm run lint
+
+      # -- Test phase
+      - name: Run unit tests
+        run: bash run-tests.sh
+
+      # -- Deploy phase
+      # TODO
