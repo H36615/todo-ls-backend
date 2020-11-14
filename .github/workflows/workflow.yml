@@ -14,14 +14,14 @@ jobs:
         uses: actions/checkout@v2
 
       - name: Build docker image(s)
-        run: bash build.sh
+        run: bash scripts/build.sh
 
       - name: Run lint
         run: docker run todo-ls-backend npm run lint
 
       # -- Test phase
       - name: Run unit tests
-        run: bash run-tests.sh
+        run: bash scripts/run-tests.sh
 
       # -- Deploy phase
       # TODO
