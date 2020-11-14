@@ -17,7 +17,7 @@
 	},
 	"scripts": {
 		"start": "npx ts-node-dev src/index.ts",
-		"lint": "npx eslint src/",
+		"lint": "npx eslint src/ --max-warnings 0",
 		"migrate": "npx knex migrate:latest",
 		"rollback-last": "npx knex migrate:down",
 		"seed": "npx knex seed:run",
