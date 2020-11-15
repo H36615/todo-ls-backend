@@ -6,6 +6,9 @@ import knex from "knex";
  * Mock db config's selected functions to respond w/ mock promise response.
  * If Error is passed to 'response', a rejecting promise w/ the error
  * will be responded.
+ * 
+ * Note: mock dbconfig for this to work.
+ * "jest.mock("../../config/db-config");"
  */
 function mockDBConfig(dBConfig: knex, response: Record<string, any> | Error): void {
 	(dBConfig as any).mockImplementation(() => ({

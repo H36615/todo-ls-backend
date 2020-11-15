@@ -12,8 +12,7 @@ export const registerUser: IController = (req, res, next): Promise<void> => {
 		UserDA.createNewUser(validatedValue).then(() => {
 			res.send(getResponseValue(ResponseType.UserCreated));
 		})
-	
-		// TODO create session?
+		
 	).catch(error => {
 		Logger.error("user controller: User creation failed.");
 		next(error);
