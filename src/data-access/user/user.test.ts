@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { mockDBConfig } from "../../../testing/db-mocks";
 import { dBConfig } from "../../config/db-config";
 import { IExistingUser, userDBModel } from "../../models/user/user";
