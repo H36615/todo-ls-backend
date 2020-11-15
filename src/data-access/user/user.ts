@@ -5,10 +5,11 @@ import { Logger } from "../../utils/logger/logger";
 
 /** User data access. */
 export class UserDA {
+
 	/**
 	 * Get users from DB by given params.
 	 */
-	private static getUsersFromDB(username: string, tag?: number): Promise<IExistingUser[]> {
+	public static getUsersFromDB(username: string, tag?: number): Promise<IExistingUser[]> {
 		if (tag != undefined) {
 			const searchObject: Pick<IExistingUser, "username" | "tag">
 				= { username: username, tag: tag };
