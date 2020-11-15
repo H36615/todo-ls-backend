@@ -1,12 +1,60 @@
+import { Enviroment, EnviromentUtils } from "./enviroment";
 
+describe("enviroment utils", () => {
+	describe("getValidatedEnviroment", () => {
+		beforeEach(() => {
+			jest.resetModules();
+		});
 
-describe("enviroment", () => {
+		[
+			Enviroment.development,
+			Enviroment.production,
+		]
+			.forEach(testableValue => {
+				test(testableValue + " should be valid", () => {
+					process.env.ENVIROMENT = testableValue;
 
-	test("test getValidatedEnviroment", () => {
-		throw new Error("Not implemented");
+					require("./enviroment");
+
+					expect(EnviromentUtils.getValidatedEnviroment()).toEqual(testableValue);
+				});
+			});
+
+		[
+			undefined,
+			"asbaasdfsfdsfd",
+		]
+			.forEach(testableValue => {
+				test(testableValue + " should be invalid", () => {
+					process.env.ENVIROMENT = testableValue;
+
+					require("./enviroment");
+
+					expect(EnviromentUtils.getValidatedEnviroment).toThrowError();
+				});
+			});
 	});
 
-	test("test getValidatedSessionSecret", () => {
-		throw new Error("Not implemented");
+	describe("getValidatedSessionSecret", () => {
+		beforeEach(() => {
+			jest.resetModules();
+		});
+
+		test("valid session secret should be returned", () => {
+			const validValue = "i_am_valid";
+			process.env.SESSION_SECRET = validValue;
+
+			require("./enviroment");
+
+			expect(EnviromentUtils.getValidatedSessionSecret()).toEqual(validValue);
+		});
+
+		test("valid session secret should be returned", () => {
+			process.env.SESSION_SECRET = "";
+
+			require("./enviroment");
+
+			expect(EnviromentUtils.getValidatedSessionSecret).toThrowError();
+		});
 	});
 });

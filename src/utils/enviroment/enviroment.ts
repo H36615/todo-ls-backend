@@ -8,12 +8,11 @@ export class EnviromentUtils {
 			return Enviroment.development;
 		else if (process.env.ENVIROMENT === Enviroment.production)
 			return Enviroment.production;
-		else
-			throw new Error("incorrect enviroment .env value set");
+		throw new Error("incorrect enviroment .env value set");
 	}
 
 	public static getValidatedSessionSecret(): string {
-		if (process.env.SESSION_SECRET != undefined)
+		if (process.env.SESSION_SECRET != undefined && process.env.SESSION_SECRET != "")
 			return process.env.SESSION_SECRET;
 
 		throw new Error("session secret .env value is undefined");
