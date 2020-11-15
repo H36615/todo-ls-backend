@@ -3,7 +3,7 @@ import { ExpressTestHelpers, IReqMock } from "../../../testing/express-mocks";
 import { UserDA } from "../../data-access/user/user";
 import { newUserValidator } from "../../models/user/user";
 import { Logger } from "../../utils/logger/logger";
-import { getResponseValue, ResponseType } from "../interfaces";
+import { ResponseType } from "../interfaces";
 import { registerUser } from "./user";
 
 jest.mock("../../models/user/user");
@@ -30,9 +30,7 @@ describe("user controller", () => {
 			// -- Assert
 			expect(Logger.error).not.toHaveBeenCalled();
 			expect(nextSpy).not.toHaveBeenCalled();
-			expect(resMock.send).toHaveBeenCalledWith(
-				getResponseValue(ResponseType.UserCreated)
-			);
+			expect(resMock.send).toHaveBeenCalledWith(ResponseType.UserCreated);
 		});
 
 		test("should catch validation error properly", async () => {

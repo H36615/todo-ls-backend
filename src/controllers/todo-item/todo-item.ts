@@ -2,7 +2,7 @@ import { Logger } from "../../utils/logger/logger";
 import {
 	INewTodoItem, newTodoItemValidator
 } from "../../models/todo-item/todo-item";
-import { getResponseValue, IController, ResponseType } from "../interfaces";
+import { IController, ResponseType } from "../interfaces";
 import { AuthUtils } from "../../utils/user/user";
 import { TodoItemDA } from "../../data-access/todo-item/todo-item";
 
@@ -34,7 +34,7 @@ export const addTodoItem: IController = (req, res, next): Promise<void> => {
 			return TodoItemDA.addNew({ ...validatedValue, user_id: userId });
 		})
 		.then(() => {
-			res.send(getResponseValue(ResponseType.OK));
+			res.send(ResponseType.OK);
 		})
 		.catch(error => {
 			Logger.error(error);

@@ -3,7 +3,7 @@ import { Logger } from "../../utils/logger/logger";
 import {
 	ITodoItem, TodoItemStatus, newTodoItemValidator, INewTodoItem
 } from "../../models/todo-item/todo-item";
-import { getResponseValue, ResponseType } from "../interfaces";
+import { ResponseType } from "../interfaces";
 import { addTodoItem, getAllTodoItems } from "./todo-item";
 import { AuthUtils } from "../../utils/user/user";
 import { TodoItemDA } from "../../data-access/todo-item/todo-item";
@@ -123,9 +123,7 @@ describe("addTodoItem", () => {
 		expect(TodoItemDA.addNew).toHaveBeenCalledWith(
 			{ ...fakeValidatedValue, user_id: fakeUserId }
 		);
-		expect(resMock.send).toHaveBeenCalledWith(
-			getResponseValue(ResponseType.OK)
-		);
+		expect(resMock.send).toHaveBeenCalledWith(ResponseType.OK);
 		expect(AuthUtils.getUserIdFromSession).toHaveBeenCalledWith(reqMock);
 	});
 

@@ -5,20 +5,7 @@ export interface IController {
 }
 
 export const enum ResponseType {
-	OK,
-	UserCreated,
-	LoginSuccess,
+	OK = "ok",
+	UserCreated = "user created",
+	LoginSuccess = "login success",
 }
-
-/** default case is 'OK' */
-export const getResponseValue = (responseType: ResponseType): { response: string } => {
-	switch (responseType) {
-	default:
-	case ResponseType.OK:
-		return { response: "ok"};
-	case ResponseType.UserCreated:
-		return { response: "user created"};
-	case ResponseType.LoginSuccess:
-		return { response: "login success"};
-	}
-};
