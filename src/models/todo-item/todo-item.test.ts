@@ -30,7 +30,7 @@ describe("newTodoItemValidator", () => {
 		expect(interfaceKeys).toEqual(validatorKeys);
 	});
 
-	describe("validator", () => {
+	describe("validation", () => {
 		// -- Arrange
 		const validItems: Array<Omit<INewTodoItem, "user_id">> = [
 			{
@@ -87,7 +87,7 @@ describe("newTodoItemValidator", () => {
 
 		// -- Act & Assert
 		validItems.forEach((item: Omit<INewTodoItem, "user_id">) => {
-			test("item (w/ task: " + item.task + ") should be rejected properly", () => {
+			test("item (w/ task: " + item.task + ") should pass validation", () => {
 				return newTodoItemValidator.validateAsync(item)
 					.then(validatedValue => {
 						expect(validatedValue).toEqual(item);
@@ -95,7 +95,7 @@ describe("newTodoItemValidator", () => {
 			});
 		});
 		invalidItems.forEach((item: Omit<INewTodoItem, "user_id">) => {
-			test("item (w/ task: " + item.task + ") should be rejected properly", () => {
+			test("item (w/ task: " + item.task + ") should be rejected", () => {
 				return newTodoItemValidator.validateAsync(item)
 					.then(() => {
 						return Promise.reject("should have already been rejected");

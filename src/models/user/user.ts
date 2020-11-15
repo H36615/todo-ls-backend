@@ -30,10 +30,10 @@ const userDBModel: IDatabaseModel<IExistingUser> = {
 // Uncomment if needed.
 // const tagValidator = Joi.number().min(0).max(Number.MAX_VALUE).required();
 const emailValidator = Joi.string().email().required();
-const passwordValidator = Joi.string().min(6).required();
+const passwordValidator = Joi.string().min(6).max(512).required();
 const newUserValidator = Joi.object(
 	{
-		username: Joi.string().min(1).max(32).required(),
+		username: Joi.string().alphanum().min(1).max(32).required(),
 		email: emailValidator,
 		password: passwordValidator,
 	}
