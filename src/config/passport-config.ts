@@ -3,7 +3,7 @@ import passportConfig from "passport";
 import { Strategy as LocalStrategy } from "passport-local";
 import { IExistingUser, userDBModel } from "../models/user/user";
 import { Logger } from "../utils/logger/logger";
-import { AuthUtils } from "../utils/user/user";
+import { AuthUtils } from "../utils/auth/auth";
 import { UserDA } from "../data-access/user/user";
 
 const passportStrategies: { [key: string]: string; } = {

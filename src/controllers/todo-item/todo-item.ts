@@ -3,7 +3,7 @@ import {
 	INewTodoItem, newTodoItemValidator
 } from "../../models/todo-item/todo-item";
 import { IController, ResponseType } from "../interfaces";
-import { AuthUtils } from "../../utils/user/user";
+import { AuthUtils } from "../../utils/auth/auth";
 import { TodoItemDA } from "../../data-access/todo-item/todo-item";
 
 export const getAllTodoItems: IController = (req, res, next): Promise<void> => {

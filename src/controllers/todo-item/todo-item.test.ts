@@ -5,7 +5,7 @@ import {
 } from "../../models/todo-item/todo-item";
 import { ResponseType } from "../interfaces";
 import { addTodoItem, getAllTodoItems } from "./todo-item";
-import { AuthUtils } from "../../utils/user/user";
+import { AuthUtils } from "../../utils/auth/auth";
 import { TodoItemDA } from "../../data-access/todo-item/todo-item";
 /* eslint-disable @typescript-eslint/no-explicit-any */
 
