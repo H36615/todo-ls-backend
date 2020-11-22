@@ -51,11 +51,6 @@ export class AuthUtils {
 					return Promise.resolve(userId);
 
 				return Promise.reject("error: Hash did not match.");
-			})
-			// TODO This catch needed?
-			.catch(error => {
-				Logger.error(error);
-				return Promise.reject("Login failed");
 			});
 	}
 
