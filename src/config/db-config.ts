@@ -3,7 +3,7 @@
 import knex, { Config } from "knex";
 import knexFile from "../../knexfile";
 
-const enviroment = "development"; // TODO || .envify process.env
-const configOptions: Config = knexFile[enviroment] as Config;
+const environment = "development"; // TODO || .envify process.env
+const configOptions: Config = knexFile[environment] as Config;
 
 export const dBConfig = knex(configOptions);

@@ -1,14 +1,14 @@
 import * as dotenv from "dotenv";
 dotenv.config({ path: __dirname + "/../.env" });
 
-export class EnviromentUtils {
+export class EnvironmentUtils {
 
-	public static getValidatedEnviroment(): Enviroment {
-		if (process.env.ENVIROMENT === Enviroment.development)
-			return Enviroment.development;
-		else if (process.env.ENVIROMENT === Enviroment.production)
-			return Enviroment.production;
-		throw new Error("incorrect enviroment .env value set");
+	public static getValidatedEnvironment(): Environment {
+		if (process.env.ENVIRONMENT === Environment.development)
+			return Environment.development;
+		else if (process.env.ENVIRONMENT === Environment.production)
+			return Environment.production;
+		throw new Error("incorrect environment .env value set");
 	}
 
 	public static getValidatedSessionSecret(): string {
@@ -19,7 +19,7 @@ export class EnviromentUtils {
 	}
 }
 
-export enum Enviroment {
+export enum Environment {
 	development = "development",
 	production = "production",
 }
