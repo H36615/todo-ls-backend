@@ -23,8 +23,12 @@ app.use(expressSession({
 }));
 app.use(passportConfig.initialize());
 app.use(passportConfig.session());
-app.use("/", publicApi);
-app.use("/auth", authenticatedApi);
+app.use("/api/",
+	[
+		publicApi,
+		authenticatedApi
+	]
+);
 
 app.listen(port, () => {
 	console.log("running on port " + port);
