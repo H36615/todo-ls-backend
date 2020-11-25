@@ -5,23 +5,23 @@ on:
     branches:
       - develop
 jobs:
-  # Using single job since the phases are dependent on build phase
-  build_test_and_deploy:
-    runs-on: ubuntu-latest
+  test-build-and-deploy:
+    runs-on: self-hosted
     steps:
-      # -- Build phase
       - name: Checkout code
         uses: actions/checkout@v2
 
-      - name: Build docker image(s)
-        run: bash scripts/build.sh
+      - name: Install
+      run: npm install
 
       - name: Run lint
-        run: docker run todo-ls-backend npm run lint
+      run: npm run lint
 
-      # -- Test phase
       - name: Run unit tests
-        run: bash scripts/run-tests.sh
+      run: npm test
 
-      # -- Deploy phase
-      # TODO
+      - name: Build
+      run: npm run build
+
+      - name: Restart process
+      run: pm2 restart todo-ls-backend # process with given name must be defined
