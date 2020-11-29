@@ -12,16 +12,23 @@ jobs:
         uses: actions/checkout@v2
 
       - name: Install
-      run: npm install
+        run: npm install
 
       - name: Run lint
-      run: npm run lint
+        run: npm run lint
+
+      - name: Copy env values
+        run: cp ../.env ./.env
 
       - name: Run unit tests
-      run: npm test
+        # Special treatment for my crappy server (normally 'npm test')
+        run: npx jest --clearCache && npx jest --runInBand --no-cache 
 
       - name: Build
-      run: npm run build
+        run: npm run build
+
+      - name: Copy env values for build
+        run: cp ../.env ./dist/.env
 
       - name: Restart process
-      run: pm2 restart todo-ls-backend # process with given name must be defined
+        run: pm2 restart todo-ls-backend --update-env # the pm2 process must be defined
