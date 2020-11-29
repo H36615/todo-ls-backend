@@ -23,7 +23,7 @@ app.use(expressSession({
 }));
 app.use(passportConfig.initialize());
 app.use(passportConfig.session());
-app.use("/api/",
+app.use("/api",
 	[
 		publicApi,
 		authenticatedApi

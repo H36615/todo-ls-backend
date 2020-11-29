@@ -65,8 +65,9 @@ export class UserDA {
 				return this.getUsersFromDB(newUser.username, newUser.tag);
 			})
 			.then((foundUsers: Array<IExistingUser>) => {
+				const rounds = 10;
 				if (foundUsers.length === 0)
-					return hash(newUser.password, 10);
+					return hash(newUser.password, rounds);
 
 				return Promise.reject("User found with same tag");
 			})

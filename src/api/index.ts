@@ -16,7 +16,7 @@ publicApiRouter.use(
 	]
 );
 authenticatedApiRouter.use(
-	"/auth/",
+	"/auth",
 	AuthUtils.sessionIsAuthenticated,
 	[
 		todoItemRoute
