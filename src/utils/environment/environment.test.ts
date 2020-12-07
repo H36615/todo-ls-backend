@@ -49,7 +49,7 @@ describe("environment utils", () => {
 			expect(EnvironmentUtils.getValidatedSessionSecret()).toEqual(validValue);
 		});
 
-		test("valid session secret should be returned", () => {
+		test("should throw error on invalid env value", () => {
 			process.env.SESSION_SECRET = "";
 
 			require("./environment");
@@ -57,4 +57,28 @@ describe("environment utils", () => {
 			expect(EnvironmentUtils.getValidatedSessionSecret).toThrowError();
 		});
 	});
+
+	describe("getValidatedDevelopmentEnabledCorsOrigin", () => {
+		beforeEach(() => {
+			jest.resetModules();
+		});
+
+		test("should return the env value when a valid one exists", () => {
+			const validValue = "i_am_cors_origin";
+			process.env.DEVELOPMENT_ENABLED_CORS_ORIGIN = validValue;
+
+			require("./environment");
+
+			expect(EnvironmentUtils.getValidatedDevelopmentEnabledCorsOrigin()).toEqual(validValue);
+		});
+
+		test("should throw error on invalid env value", () => {
+			process.env.DEVELOPMENT_ENABLED_CORS_ORIGIN = "";
+
+			require("./environment");
+
+			expect(EnvironmentUtils.getValidatedDevelopmentEnabledCorsOrigin).toThrowError();
+		});
+	});
+
 });
