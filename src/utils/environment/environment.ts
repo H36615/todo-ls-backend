@@ -32,6 +32,18 @@ export class EnvironmentUtils {
 			+ process.env.DEVELOPMENT_ENABLED_CORS_ORIGIN
 		);
 	}
+
+	public static getValidatedServerPort(): number {
+		if (process.env.SERVER_PORT != undefined
+			&& process.env.SERVER_PORT != ""
+			&& !isNaN(+process.env.SERVER_PORT))
+			return +process.env.SERVER_PORT;
+
+		throw new Error(
+			"Wrong value in env.SERVER_PORT, which was: "
+			+ process.env.SERVER_PORT
+		);
+	}
 }
 
 export enum Environment {

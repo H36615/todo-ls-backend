@@ -81,4 +81,36 @@ describe("environment utils", () => {
 		});
 	});
 
+	describe("getValidatedServerPort", () => {
+		beforeEach(() => {
+			jest.resetModules();
+		});
+
+		test("should return a valid env value", () => {
+			const validValue = "1234";
+			process.env.SERVER_PORT = validValue;
+
+			require("./environment");
+
+			expect(EnvironmentUtils.getValidatedServerPort()).toEqual(+validValue);
+		});
+
+		test("should throw error on invalid env value", () => {
+			const invalidValue = "1234a";
+			process.env.SERVER_PORT = invalidValue;
+
+			require("./environment");
+
+			expect(EnvironmentUtils.getValidatedServerPort).toThrowError();
+		});
+
+		test("should throw error on empty env value", () => {
+			process.env.SERVER_PORT = "";
+
+			require("./environment");
+
+			expect(EnvironmentUtils.getValidatedServerPort).toThrowError();
+		});
+	});
+
 });

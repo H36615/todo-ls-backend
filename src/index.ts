@@ -7,7 +7,7 @@ import { passportConfig } from "./config/passport-config";
 import { Environment, EnvironmentUtils } from "./utils/environment/environment";
 import cors from "cors";
 
-const port = 3000;
+const port = EnvironmentUtils.getValidatedServerPort();
 const app = express();
 
 // -- NOTE: Order matters.
