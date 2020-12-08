@@ -7,7 +7,6 @@ on:
 jobs:
   test-build-and-deploy:
     runs-on: ubuntu-latest
-    env: ${{ secrets.ENV }}
     steps:
       - name: Checkout code
         uses: actions/checkout@v2
