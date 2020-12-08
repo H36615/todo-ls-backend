@@ -18,14 +18,14 @@ jobs:
         run: npm run lint
 
       - name: Run unit tests
-        run: npm test
         env:
-          ENVIRONMENT: {{ $ENVIRONMENT }}
+          ENVIRONMENT: ${{ ENVIRONMENT }}
+        run: npm test
 
       - name: Build
         run: npm run build
 
-      - name: copy file via ssh key
+      - name: Deploy i.e. copy files to host
         uses: appleboy/scp-action@master
         with:
           host: ${{ secrets.HOST }}
