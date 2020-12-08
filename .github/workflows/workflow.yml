@@ -19,7 +19,7 @@ jobs:
 
       - name: Run unit tests
         env:
-          ENVIRONMENT: ${{ ENVIRONMENT }}
+          ENVIRONMENT: ${{ secrets.ENVIRONMENT }}
         run: npm test
 
       - name: Build
