@@ -18,11 +18,10 @@ jobs:
       - name: Run lint
         run: npm run lint
 
-      # - name: Copy env values
-      #   run: cp ../.env ./.env
-
       - name: Run unit tests
         run: npm test
+        env:
+          ENVIRONMENT: {{ $ENVIRONMENT }}
 
       - name: Build
         run: npm run build
