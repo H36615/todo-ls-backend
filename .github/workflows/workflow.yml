@@ -6,7 +6,7 @@ on:
       - develop
 jobs:
   test-build-and-deploy:
-    runs-on: self-hosted
+    runs-on: ubuntu-latest
     steps:
       - name: Checkout code
         uses: actions/checkout@v2
@@ -17,18 +17,20 @@ jobs:
       - name: Run lint
         run: npm run lint
 
-      - name: Copy env values
-        run: cp ../.env ./.env
-
       - name: Run unit tests
-        # Special treatment for my crappy server (normally 'npm test')
-        run: npx jest --clearCache && npx jest --runInBand --no-cache 
+        env:
+          ENVIRONMENT: ${{ secrets.ENVIRONMENT }}
+        run: npm test
 
       - name: Build
         run: npm run build
 
-      - name: Copy env values for build
-        run: cp ../.env ./dist/.env
-
-      - name: Restart process
-        run: pm2 restart todo-ls-backend --update-env # the pm2 process must be defined
+      - name: Deploy i.e. copy files to host :)
+        uses: appleboy/scp-action@master
+        with:
+          host: ${{ secrets.HOST }}
+          username: ${{ secrets.SERVER_USERNAME }}
+          port: 22
+          key: ${{ secrets.SSH_KEY }}
+          source: "dist, node_modules"
+          target: "todo-ls-backend"
