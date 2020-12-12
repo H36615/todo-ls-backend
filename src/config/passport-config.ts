@@ -37,8 +37,8 @@ passportConfig.use(
 		},
 		(email: string, password: string, done) => {
 			AuthUtils.isAuthenticatedWithLoginInfo({ email: email, password: password })
-				.then((userId: number) => {
-					return done(null, userId);
+				.then((usernameAndTag: Pick<IExistingUser, "username" | "tag">) => {
+					return done(null, usernameAndTag);
 					// Next, should set the browser cookie through 'passportConfig.serializeUser'
 					// using the argument inside done() (if session is enabled).
 					// And then continue the route.

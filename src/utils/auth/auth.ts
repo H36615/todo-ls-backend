@@ -10,11 +10,12 @@ export class AuthUtils {
 
 	/**
 	 * Whether user is authenticated with given login info.
-	 * If success, return authenticated user id.
+	 * If success, return authenticated user's selected properties.
 	 */
-	public static isAuthenticatedWithLoginInfo(user: ILoginInformation): Promise<number> {
+	public static isAuthenticatedWithLoginInfo(user: ILoginInformation)
+		: Promise<Pick<IExistingUser, "username" | "tag">> {
 
-		let userId = -1;
+		let foundUser: IExistingUser;
 
 		return loginInformationValidator.validateAsync(user)
 			.then((validatedUser: ILoginInformation) => {
@@ -37,18 +38,18 @@ export class AuthUtils {
 						"error: More than 1 users found during authentication."
 					);
 
-				userId = usersFound[0].id;
+				foundUser = usersFound[0];
 
 				return compare(user.password, usersFound[0].password);
 			})
 			.then((hashesMatch: boolean) => {
 
-				if (userId < 0)
+				if (foundUser.id < 0)
 					return Promise.reject("error: User id not set.");
 
 				// All OK.
 				if (hashesMatch)
-					return Promise.resolve(userId);
+					return Promise.resolve({ username: foundUser.username, tag: foundUser.tag });
 
 				return Promise.reject("error: Hash did not match.");
 			});

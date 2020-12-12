@@ -7,5 +7,4 @@ export interface IController {
 export const enum ResponseType {
 	OK = "ok",
 	UserCreated = "user created",
-	LoginSuccess = "login success",
 }

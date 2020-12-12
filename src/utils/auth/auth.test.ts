@@ -51,8 +51,10 @@ describe("AuthUtils", () => {
 			AuthUtils.isAuthenticatedWithLoginInfo(loginInfo)
 
 				// -- Assert
-				.then((response: number) => {
-					expect(response).toEqual(matchingUser.id);
+				.then((response: Pick<IExistingUser, "username" | "tag">) => {
+					expect(response).toEqual(
+						{ username: matchingUser.username, tag: matchingUser.tag }
+					);
 					expect(loginInformationValidator.validateAsync).toHaveBeenCalledWith(loginInfo);
 					expect(dBConfig).toHaveBeenCalledWith(userDBModel.table);
 					expect(compare).toHaveBeenCalledWith(loginInfo.password, matchingUser.password);
