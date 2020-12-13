@@ -13,7 +13,7 @@ export class AuthUtils {
 	 * If success, return authenticated user's selected properties.
 	 */
 	public static isAuthenticatedWithLoginInfo(user: ILoginInformation)
-		: Promise<Pick<IExistingUser, "username" | "tag">> {
+		: Promise<Pick<IExistingUser, "username" | "tag" | "id">> {
 
 		let foundUser: IExistingUser;
 
@@ -49,7 +49,11 @@ export class AuthUtils {
 
 				// All OK.
 				if (hashesMatch)
-					return Promise.resolve({ username: foundUser.username, tag: foundUser.tag });
+					return Promise.resolve({
+						username: foundUser.username,
+						tag: foundUser.tag,
+						id: foundUser.id
+					});
 
 				return Promise.reject("error: Hash did not match.");
 			});
