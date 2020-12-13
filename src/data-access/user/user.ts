@@ -1,7 +1,9 @@
 import { hash } from "bcrypt";
 import { dBConfig } from "../../config/db-config";
-import { IExistingUser, INewUser, userDBModel } from "../../models/user/user";
+import { IExistingUser, ILoginInformation, INewUser, userDBModel } from "../../models/user/user";
 import { Logger } from "../../utils/logger/logger";
+
+export const userFoundByEmailErrorText = "User(s) exist with given email";
 
 /** User data access. */
 export class UserDA {
@@ -37,6 +39,11 @@ export class UserDA {
 		});
 	}
 
+	public static getUsersFromDBByEmail(email: string): Promise<IExistingUser[]> {
+		const searchObject: Pick<ILoginInformation, "email"> = { email: email };
+		return dBConfig(userDBModel.table).where(searchObject);
+	}
+
 	public static getUsersFromDBByUserId(userId: number): Promise<IExistingUser[]> {
 		if (userId === undefined)
 			return Promise.reject("user id undefined");
@@ -53,12 +60,18 @@ export class UserDA {
 		// We are gonna need to create tag before creating new user.
 		const newUser: Omit<IExistingUser, "id"> = { ..._newUser, tag: 0 };
 
-		// Deduce tag by checking existing users w/ same username.
-		return this.getUsersFromDB(newUser.username)
-			.then((foundUsers: Array<IExistingUser>) => {
+		// Check that users w/ given email do not exist
+		return this.getUsersFromDBByEmail(_newUser.email)
+			.then((foundUsersByEmail: Array<IExistingUser>) => {
+				if (foundUsersByEmail && foundUsersByEmail.length > 0)
+					return Promise.reject(userFoundByEmailErrorText);
 
-				newUser.tag = foundUsers.length > 0
-					? foundUsers[foundUsers.length - 1].tag + 1
+				// Deduce tag by checking existing users w/ same username.
+				return this.getUsersFromDB(newUser.username);
+			})
+			.then((foundUsersByUsername: Array<IExistingUser>) => {
+				newUser.tag = foundUsersByUsername.length > 0
+					? foundUsersByUsername[foundUsersByUsername.length - 1].tag + 1
 					: 0;
 
 				// Make sure user w/ same name and tag does not exist.

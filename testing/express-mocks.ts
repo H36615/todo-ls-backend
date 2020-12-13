@@ -12,6 +12,8 @@ export class ExpressTestHelpers {
 	public static createResMock(): any {
 		return {
 			send: jest.fn(),
+			json: jest.fn(),
+			status: jest.fn(),
 		};
 	}
 
