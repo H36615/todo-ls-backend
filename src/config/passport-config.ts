@@ -39,6 +39,7 @@ passportConfig.use(
 		(email: string, password: string, done) => {
 			AuthUtils.isAuthenticatedWithLoginInfo({ email: email, password: password })
 				.then((userProperties: Pick<IExistingUser, "username" | "tag" | "id">) => {
+					Logger.debug("Auth succeeded (id = " + userProperties.id + ").");
 					// Send client the selected user properties.
 					return done(null, userProperties);
 					// Next, should set the browser cookie through 'passportConfig.serializeUser'
@@ -46,16 +47,11 @@ passportConfig.use(
 					// And then continue the route.
 				})
 				.catch(error => {
-					return createError(done, error);
+					Logger.error(error);
+					return done(null, false, { message: "Auth failed" });
 				});
 		}
 	)
 );
-
-// Passport did not provide type.
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-function createError(done: any, errorMessage: string) {
-	return done(errorMessage, false);
-}
 
 export { passportConfig, passportStrategies };
