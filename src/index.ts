@@ -21,7 +21,9 @@ app.use(expressSession({
 	saveUninitialized: true,
 	cookie: {
 		// With 'true' cookie is sent only in https (not http).
-		secure: EnvironmentUtils.getValidatedEnvironment() === Environment.production,
+		secure: EnvironmentUtils.getValidatedEnvironment() === Environment.production
+			? true
+			: "auto",
 		maxAge: 1000 * 60 * 60 * 24 * 1 // value in milliseconds
 	},
 }));
