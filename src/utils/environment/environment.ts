@@ -22,14 +22,14 @@ export class EnvironmentUtils {
 		);
 	}
 
-	public static getValidatedDevelopmentEnabledCorsOrigin(): string {
-		if (process.env.DEVELOPMENT_ENABLED_CORS_ORIGIN != undefined
-			&& process.env.DEVELOPMENT_ENABLED_CORS_ORIGIN != "")
-			return process.env.DEVELOPMENT_ENABLED_CORS_ORIGIN;
+	public static getValidatedCorsOrigin(): string {
+		if (process.env.CORS_ORIGIN != undefined
+			&& process.env.CORS_ORIGIN != "")
+			return process.env.CORS_ORIGIN;
 
 		throw new Error(
-			"Wrong value in env.DEVELOPMENT_ENABLED_CORS_ORIGIN, which was: "
-			+ process.env.DEVELOPMENT_ENABLED_CORS_ORIGIN
+			"Wrong value in env.CORS_ORIGIN, which was: "
+			+ process.env.CORS_ORIGIN
 		);
 	}
 

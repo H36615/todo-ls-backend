@@ -11,9 +11,20 @@ const port = EnvironmentUtils.getValidatedServerPort();
 const app = express();
 
 // -- NOTE: Order matters.
-// Cors to allow selected development origin when in development environment.
+
+// NOTE: To use credential parameters in api calls from browsers, the exact
+// urls as cors origins (not * wildcard) must be defined. See link below.
+// eslint-disable-next-line max-len
+// https://stackoverflow.com/questions/19743396/cors-cannot-use-wildcard-in-access-control-allow-origin-when-credentials-flag-i#comment97905405_19744754
+const corsOrigins = [EnvironmentUtils.getValidatedCorsOrigin()];
 if (EnvironmentUtils.getValidatedEnvironment() === Environment.development)
-	app.use(cors({ origin: EnvironmentUtils.getValidatedDevelopmentEnabledCorsOrigin(), }));
+	corsOrigins.push("http://localhost:3000");
+app.use(
+	cors({
+		origin: corsOrigins,
+		credentials: true,
+	})
+);
 app.use(express.json());
 app.use(expressSession({
 	secret: EnvironmentUtils.getValidatedSessionSecret(),

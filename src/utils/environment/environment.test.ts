@@ -65,19 +65,19 @@ describe("environment utils", () => {
 
 		test("should return the env value when a valid one exists", () => {
 			const validValue = "i_am_cors_origin";
-			process.env.DEVELOPMENT_ENABLED_CORS_ORIGIN = validValue;
+			process.env.CORS_ORIGIN = validValue;
 
 			require("./environment");
 
-			expect(EnvironmentUtils.getValidatedDevelopmentEnabledCorsOrigin()).toEqual(validValue);
+			expect(EnvironmentUtils.getValidatedCorsOrigin()).toEqual(validValue);
 		});
 
 		test("should throw error on invalid env value", () => {
-			process.env.DEVELOPMENT_ENABLED_CORS_ORIGIN = "";
+			process.env.CORS_ORIGIN = "";
 
 			require("./environment");
 
-			expect(EnvironmentUtils.getValidatedDevelopmentEnabledCorsOrigin).toThrowError();
+			expect(EnvironmentUtils.getValidatedCorsOrigin).toThrowError();
 		});
 	});
 
