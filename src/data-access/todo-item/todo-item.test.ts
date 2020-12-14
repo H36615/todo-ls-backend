@@ -27,9 +27,10 @@ describe("TodoItemDA", () => {
 			];
 			const filteredfakeResults = fakeResults.map(
 				(row: ITodoItem) => {
-					const mapItem: Pick<INewTodoItem, "task" | "status"> = {
+					const mapItem: Omit<ITodoItem, "user_id"> = {
 						task: row.task,
 						status: row.status,
+						id: row.id,
 					};
 					return mapItem;
 				}

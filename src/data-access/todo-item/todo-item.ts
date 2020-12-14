@@ -5,7 +5,7 @@ import { INewTodoItem, ITodoItem, todoItemDBModel } from "../../models/todo-item
 export class TodoItemDA {
 
 	/** Get all items by @param & filter out unneeded fields on each item. */
-	public static getAllMapped(userId: number): Promise<Pick<INewTodoItem, "task" | "status">[]> {
+	public static getAllMapped(userId: number): Promise<Omit<ITodoItem, "user_id">[]> {
 
 		const userIdObject: Pick<INewTodoItem, "user_id"> = {
 			user_id: userId,
@@ -20,9 +20,10 @@ export class TodoItemDA {
 				// Filter out unneeded fields.
 				return rows.map(
 					(row: ITodoItem) => {
-						const mapItem: Pick<INewTodoItem, "task" | "status"> = {
+						const mapItem: Omit<ITodoItem, "user_id"> = {
 							task: row.task,
 							status: row.status,
+							id: row.id,
 						};
 						return mapItem;
 					}
