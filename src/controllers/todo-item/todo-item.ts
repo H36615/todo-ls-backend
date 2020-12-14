@@ -1,6 +1,6 @@
 import { Logger } from "../../utils/logger/logger";
 import {
-	INewTodoItem, newTodoItemValidator
+	INewTodoItem, ITodoItem, newTodoItemValidator
 } from "../../models/todo-item/todo-item";
 import { IController, ResponseType } from "../interfaces";
 import { AuthUtils } from "../../utils/auth/auth";
@@ -11,7 +11,7 @@ export const getAllTodoItems: IController = (req, res, next): Promise<void> => {
 		.then((userId: number) => {
 			return TodoItemDA.getAllMapped(userId);
 		})
-		.then((rows: Pick<INewTodoItem, "task" | "status">[]) => {
+		.then((rows: Omit<ITodoItem, "user_id">[]) => {
 			res.send(rows);
 		})
 		.catch(err => {

@@ -34,9 +34,10 @@ describe("getAllTodoItems", () => {
 	];
 	const filteredResponseMock = responseMock.map(
 		(row: ITodoItem) => {
-			const mapItem: Pick<INewTodoItem, "task" | "status"> = {
+			const mapItem: Omit<ITodoItem, "user_id"> = {
 				task: row.task,
 				status: row.status,
+				id: row.id,
 			};
 			return mapItem;
 		}
@@ -49,7 +50,7 @@ describe("getAllTodoItems", () => {
 			(): Promise<number> => Promise.resolve(fakeUserId)
 		);
 		jest.spyOn(TodoItemDA, "getAllMapped").mockImplementation(
-			(): Promise<Pick<INewTodoItem, "task" | "status">[]> =>
+			(): Promise<Omit<ITodoItem, "user_id">[]> =>
 				Promise.resolve(filteredResponseMock)
 		);
 
@@ -68,7 +69,7 @@ describe("getAllTodoItems", () => {
 			(): Promise<number> => Promise.reject(errorMessage)
 		);
 		jest.spyOn(TodoItemDA, "getAllMapped").mockImplementation(
-			(): Promise<Pick<INewTodoItem, "task" | "status">[]> =>
+			(): Promise<Omit<ITodoItem, "user_id">[]> =>
 				Promise.resolve(filteredResponseMock)
 		);
 		jest.spyOn(Logger, "error");
@@ -87,7 +88,7 @@ describe("getAllTodoItems", () => {
 			(): Promise<number> => Promise.resolve(fakeUserId)
 		);
 		jest.spyOn(TodoItemDA, "getAllMapped").mockImplementation(
-			(): Promise<Pick<INewTodoItem, "task" | "status">[]> =>
+			(): Promise<Omit<ITodoItem, "user_id">[]> =>
 				Promise.reject(errorMessage)
 		);
 		jest.spyOn(Logger, "error");
