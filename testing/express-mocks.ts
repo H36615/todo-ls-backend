@@ -24,13 +24,14 @@ export class ExpressTestHelpers {
 	 * in which case the testable entity should be imported after the use of this mocker,
 	 * using e.g. 'require("...")'.
 	 */
-	public static mockExpress(getSpy?: jest.Mock, postSpy?: jest.Mock): void {
+	public static mockExpress(getSpy?: jest.Mock, postSpy?: jest.Mock, putSpy?: jest.Mock): void {
 		jest.doMock(
 			"express",
 			() => ({
 				Router: () => ({
 					get: getSpy || this.empty,
 					post: postSpy || this.empty,
+					put: putSpy || this.empty,
 				})
 			})
 		);

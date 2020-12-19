@@ -1,10 +1,10 @@
 import { ExpressTestHelpers, IReqMock } from "../../../testing/express-mocks";
 import { Logger } from "../../utils/logger/logger";
 import {
-	ITodoItem, TodoItemStatus, newTodoItemValidator, INewTodoItem
+	ITodoItem, TodoItemStatus, newTodoItemValidator, INewTodoItem, todoItemValidator
 } from "../../models/todo-item/todo-item";
 import { ResponseType } from "../interfaces";
-import { addTodoItem, getAllTodoItems } from "./todo-item";
+import { addTodoItem, getAllTodoItems, updateTodoItem } from "./todo-item";
 import { AuthUtils } from "../../utils/auth/auth";
 import { TodoItemDA } from "../../data-access/todo-item/todo-item";
 /* eslint-disable @typescript-eslint/no-explicit-any */
@@ -230,5 +230,136 @@ describe("addTodoItem", () => {
 		expect(nextSpy).toHaveBeenCalledWith(errorMessage);
 		expect(resMock.send).not.toHaveBeenCalled();
 		expect(Logger.error).toHaveBeenCalledWith(errorMessage);
+	});
+});
+
+describe("updateTodoItem", () => {
+
+	const fakeUserId = 1;
+	const fakeValidatedValue: ITodoItem = {
+		id: 2,
+		user_id: 22,
+		task: "tasky",
+		status: TodoItemStatus.done,
+	};
+	const errorMessage = "faily";
+
+	test("should update properly", async () => {
+		// -- Arrange
+		jest.spyOn(AuthUtils, "getUserIdFromSession").mockImplementation(
+			(): Promise<number> => Promise.resolve(fakeUserId)
+		);
+		jest.spyOn(todoItemValidator, "validateAsync").mockImplementation(
+			(): Promise<ITodoItem> => Promise.resolve(fakeValidatedValue)
+		);
+		jest.spyOn(TodoItemDA, "update").mockImplementation(
+			(): Promise<void> => Promise.resolve()
+		);
+		jest.spyOn(Logger, "error");
+
+		const nextSpy: any = jest.fn();
+		const resMock = ExpressTestHelpers.createResMock();
+		const reqMock: IReqMock = { body: { anything: "yup" } };
+
+		// -- Act
+		await updateTodoItem(reqMock as any, resMock, nextSpy);
+
+		// -- Assert
+		expect(AuthUtils.getUserIdFromSession).toHaveBeenCalledWith(reqMock);
+		expect(todoItemValidator.validateAsync)
+			.toHaveBeenCalledWith({ ...reqMock.body, user_id: fakeUserId });
+		expect(TodoItemDA.update)
+			.toHaveBeenCalledWith(fakeValidatedValue);
+		expect(resMock.json).toHaveBeenCalledWith(ResponseType.OK);
+		expect(Logger.error).not.toHaveBeenCalled();
+	});
+
+	test("should catch auth error properly", async () => {
+		// -- Arrange
+		jest.spyOn(AuthUtils, "getUserIdFromSession").mockImplementation(
+			(): Promise<number> => Promise.reject(errorMessage)
+		);
+		jest.spyOn(todoItemValidator, "validateAsync").mockImplementation(
+			(): Promise<ITodoItem> => Promise.resolve(fakeValidatedValue)
+		);
+		jest.spyOn(TodoItemDA, "update").mockImplementation(
+			(): Promise<void> => Promise.resolve()
+		);
+		jest.spyOn(Logger, "error");
+
+		const nextSpy: any = jest.fn();
+		const resMock = ExpressTestHelpers.createResMock();
+		const reqMock: IReqMock = { body: { anything: "yes" } };
+
+		// -- Act
+		await updateTodoItem(reqMock as any, resMock, nextSpy);
+
+		// -- Assert
+		expect(AuthUtils.getUserIdFromSession).toHaveBeenCalledWith(reqMock);
+		expect(todoItemValidator.validateAsync).not.toHaveBeenCalled();
+		expect(TodoItemDA.update).not.toHaveBeenCalled();
+		expect(resMock.json).not.toHaveBeenCalled();
+		expect(Logger.error).toHaveBeenCalledWith(errorMessage);
+		expect(nextSpy).toHaveBeenCalledWith(new Error("Updating item failed"));
+	});
+
+	test("should catch validation error properly", async () => {
+		// -- Arrange
+		jest.spyOn(AuthUtils, "getUserIdFromSession").mockImplementation(
+			(): Promise<number> => Promise.resolve(fakeUserId)
+		);
+		jest.spyOn(todoItemValidator, "validateAsync").mockImplementation(
+			(): Promise<ITodoItem> => Promise.reject(errorMessage)
+		);
+		jest.spyOn(TodoItemDA, "update").mockImplementation(
+			(): Promise<void> => Promise.resolve()
+		);
+		jest.spyOn(Logger, "error");
+
+		const nextSpy: any = jest.fn();
+		const resMock = ExpressTestHelpers.createResMock();
+		const reqMock: IReqMock = { body: { anything: "yes" } };
+
+		// -- Act
+		await updateTodoItem(reqMock as any, resMock, nextSpy);
+
+		// -- Assert
+		expect(AuthUtils.getUserIdFromSession).toHaveBeenCalledWith(reqMock);
+		expect(todoItemValidator.validateAsync)
+			.toHaveBeenCalledWith({ ...reqMock.body, user_id: fakeUserId });
+		expect(TodoItemDA.update).not.toHaveBeenCalled();
+		expect(resMock.json).not.toHaveBeenCalled();
+		expect(Logger.error).toHaveBeenCalledWith(errorMessage);
+		expect(nextSpy).toHaveBeenCalledWith(new Error("Updating item failed"));
+	});
+
+	test("should catch data access error properly", async () => {
+		// -- Arrange
+		jest.spyOn(AuthUtils, "getUserIdFromSession").mockImplementation(
+			(): Promise<number> => Promise.resolve(fakeUserId)
+		);
+		jest.spyOn(todoItemValidator, "validateAsync").mockImplementation(
+			(): Promise<Omit<INewTodoItem, "user_id">> => Promise.resolve(fakeValidatedValue)
+		);
+		jest.spyOn(TodoItemDA, "update").mockImplementation(
+			(): Promise<void> => Promise.reject(errorMessage)
+		);
+		jest.spyOn(Logger, "error");
+
+		const nextSpy: any = jest.fn();
+		const resMock = ExpressTestHelpers.createResMock();
+		const reqMock: IReqMock = { body: { anything: "yes22" } };
+
+		// -- Act
+		await updateTodoItem(reqMock as any, resMock, nextSpy);
+
+		// -- Assert
+		expect(todoItemValidator.validateAsync)
+			.toHaveBeenCalledWith({ ...reqMock.body, user_id: fakeUserId });
+		expect(AuthUtils.getUserIdFromSession).toHaveBeenCalledWith(reqMock);
+		expect(TodoItemDA.update).toHaveBeenCalledWith(fakeValidatedValue);
+		expect(resMock.json).not.toHaveBeenCalled();
+		expect(Logger.error).toHaveBeenCalledWith(errorMessage);
+		expect(nextSpy).toHaveBeenCalledWith(new Error("Updating item failed"));
 	});
 });

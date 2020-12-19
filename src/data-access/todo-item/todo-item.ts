@@ -31,12 +31,29 @@ export class TodoItemDA {
 			});
 	}
 
-	public static addNew(newItem: INewTodoItem): Promise<void> {
-
+	public static addNew(newItem: INewTodoItem): Promise<void | number> {
 		return dBConfig(todoItemDBModel.table)
 			.insert(newItem)
 			.then(() => {
 				return;
+			});
+	}
+
+	public static update(item: ITodoItem): Promise<number | void> {
+		if (!item)
+			return Promise.reject("item does not exist");
+
+		const whereObject: Pick<ITodoItem, "id" | "user_id">
+			= { id: item.id, user_id: item.user_id };
+
+		return dBConfig(todoItemDBModel.table)
+			.where(whereObject)
+			.update({ task: item.task, status: item.status })
+			.then((updatedRows: number) => {
+				if (updatedRows > 0)
+					return Promise.resolve(updatedRows);
+
+				return Promise.reject("Updated 0 rows");
 			});
 	}
 }

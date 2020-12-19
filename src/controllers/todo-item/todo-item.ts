@@ -1,6 +1,6 @@
 import { Logger } from "../../utils/logger/logger";
 import {
-	INewTodoItem, ITodoItem, newTodoItemValidator
+	INewTodoItem, ITodoItem, newTodoItemValidator, todoItemValidator
 } from "../../models/todo-item/todo-item";
 import { IController, ResponseType } from "../interfaces";
 import { AuthUtils } from "../../utils/auth/auth";
@@ -39,5 +39,23 @@ export const addTodoItem: IController = (req, res, next): Promise<void> => {
 		.catch(error => {
 			Logger.error(error);
 			next(error);
+		});
+};
+
+export const updateTodoItem: IController = (req, res, next): Promise<void> => {
+	return AuthUtils.getUserIdFromSession(req)
+		.then((userId: number) => {
+			// Validate param
+			return todoItemValidator.validateAsync({...req.body, user_id: userId});
+		})
+		.then((validatedValue: ITodoItem) => {
+			return TodoItemDA.update(validatedValue);
+		})
+		.then(() => {
+			res.json(ResponseType.OK);
+		})
+		.catch(error => {
+			Logger.error(error);
+			next(new Error("Updating item failed"));
 		});
 };
