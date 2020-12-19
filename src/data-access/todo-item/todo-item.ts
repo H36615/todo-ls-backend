@@ -56,4 +56,22 @@ export class TodoItemDA {
 				return Promise.reject("Updated 0 rows");
 			});
 	}
+
+	public static delete(item: Pick<ITodoItem, "id" | "user_id">): Promise<number | void> {
+		if (!item)
+			return Promise.reject("item parameter missing");
+
+		const whereObject: Pick<ITodoItem, "id" | "user_id">
+			= { id: item.id, user_id: item.user_id };
+
+		return dBConfig(todoItemDBModel.table)
+			.where(whereObject)
+			.del()
+			.then((updatedRows: number) => {
+				if (updatedRows > 0)
+					return Promise.resolve(updatedRows);
+
+				return Promise.reject("Deleted 0 rows");
+			});
+	}
 }

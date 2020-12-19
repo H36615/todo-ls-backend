@@ -31,6 +31,7 @@ const todoItemDBModel: IDatabaseModel<ITodoItem> = {
 
 const taskValidator = Joi.string().min(1).max(100).required();
 const statusValidator = Joi.string().valid(...Object.values(TodoItemStatus)).required();
+const idValidator = Joi.number().min(0).max(Number.MAX_SAFE_INTEGER).required();
 /** Validator for new todo items. User id omitted since it's set from session. */
 const newTodoItemValidator = Joi.object(
 	{
@@ -41,9 +42,14 @@ const newTodoItemValidator = Joi.object(
 const todoItemValidator = Joi.object(
 	{
 		user_id: Joi.number().min(0).max(Number.MAX_SAFE_INTEGER).required(),
-		id: Joi.number().min(0).max(Number.MAX_SAFE_INTEGER).required(),
+		id: idValidator,
 		task: taskValidator,
 		status: statusValidator,
+	}
+);
+const idValidatorObject = Joi.object(
+	{
+		id: idValidator,
 	}
 );
 
@@ -54,4 +60,6 @@ export {
 	todoItemDBModel,
 	newTodoItemValidator,
 	todoItemValidator,
+	taskValidator,
+	idValidatorObject,
 };

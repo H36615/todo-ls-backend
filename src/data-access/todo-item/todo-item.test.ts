@@ -214,4 +214,85 @@ describe("TodoItemDA", () => {
 				});
 		});
 	});
+
+	describe("delete", () => {
+		const fakeItem: Pick<ITodoItem, "id" | "user_id"> = {
+			id: 1,
+			user_id: 11,
+		};
+
+		function updateStub(response: number | Error) {
+			return ({
+				del: () =>
+					(response instanceof Error)
+						? Promise.reject(response)
+						: Promise.resolve(response)
+			});
+		}
+
+		function _mockDBConfig(
+			dBConfig: knex,
+			response: number | Error
+		): void {
+			// eslint-disable-next-line @typescript-eslint/no-explicit-any
+			(dBConfig as any).mockImplementation(() => ({
+				where: () => updateStub(response),
+				select: () => null,
+				insert: () => null,
+				update: () => null,
+			}));
+		}
+
+		test("should resolve properly", (done) => {
+
+			// -- Arrange
+			const updatedRows = 1;
+			_mockDBConfig(dBConfig, updatedRows);
+
+			// -- Act
+			TodoItemDA.delete(fakeItem)
+				// -- Assert
+				.then(() => {
+					expect(dBConfig).toHaveBeenCalledWith(todoItemDBModel.table);
+					done();
+				});
+		});
+
+		test("should throw error on 0 updated rows", (done) => {
+
+			// -- Arrange
+			const updatedRows = 0;
+			_mockDBConfig(dBConfig, updatedRows);
+
+			// -- Act
+			TodoItemDA.delete(fakeItem)
+				// -- Assert
+				.then(() => {
+					done.fail("should have caught error");
+				})
+				.catch(error => {
+					expect(error).toEqual("Deleted 0 rows");
+					expect(dBConfig).toHaveBeenCalledWith(todoItemDBModel.table);
+					done();
+				});
+		});
+
+		test("should catch data access error properly", (done) => {
+			// -- Arrange
+			const error = new Error("DA errory");
+			_mockDBConfig(dBConfig, error);
+
+			// -- Act
+			TodoItemDA.delete(fakeItem)
+				// -- Assert
+				.then(() => {
+					done.fail("should have caught error");
+				})
+				.catch(error => {
+					expect(error).toEqual(new Error("DA errory"));
+					expect(dBConfig).toHaveBeenCalledWith(todoItemDBModel.table);
+					done();
+				});
+		});
+	});
 });

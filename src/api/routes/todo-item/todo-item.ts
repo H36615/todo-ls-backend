@@ -1,5 +1,5 @@
 import { Router } from "express";
-import { getAllTodoItems, addTodoItem, updateTodoItem }
+import { getAllTodoItems, addTodoItem, updateTodoItem, deleteTodoItem }
 	from "../../../controllers/todo-item/todo-item";
 
 const router = Router();
@@ -14,6 +14,10 @@ router.post("/todo-item/add", (req, res, next) => {
 
 router.put("/todo-item/update", (req, res, next) => {
 	updateTodoItem(req, res, next);
+});
+
+router.delete("/todo-item/one", (req, res, next) => {
+	deleteTodoItem(req, res, next);
 });
 
 export default router;

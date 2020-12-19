@@ -1,10 +1,11 @@
 import { ExpressTestHelpers, IReqMock } from "../../../testing/express-mocks";
 import { Logger } from "../../utils/logger/logger";
 import {
-	ITodoItem, TodoItemStatus, newTodoItemValidator, INewTodoItem, todoItemValidator
+	ITodoItem, TodoItemStatus, newTodoItemValidator, INewTodoItem, todoItemValidator,
+	idValidatorObject
 } from "../../models/todo-item/todo-item";
 import { ResponseType } from "../interfaces";
-import { addTodoItem, getAllTodoItems, updateTodoItem } from "./todo-item";
+import { addTodoItem, deleteTodoItem, getAllTodoItems, updateTodoItem } from "./todo-item";
 import { AuthUtils } from "../../utils/auth/auth";
 import { TodoItemDA } from "../../data-access/todo-item/todo-item";
 /* eslint-disable @typescript-eslint/no-explicit-any */
@@ -361,5 +362,131 @@ describe("updateTodoItem", () => {
 		expect(resMock.json).not.toHaveBeenCalled();
 		expect(Logger.error).toHaveBeenCalledWith(errorMessage);
 		expect(nextSpy).toHaveBeenCalledWith(new Error("Updating item failed"));
+	});
+});
+
+describe("deleteTodoItem", () => {
+
+	const fakeUserId = 1;
+	const fakeValidatedValue: Pick<ITodoItem, "id"> = {
+		id: 2,
+	};
+	const errorMessage = "faily";
+
+	test("should delete properly", async () => {
+		// -- Arrange
+		jest.spyOn(AuthUtils, "getUserIdFromSession").mockImplementation(
+			(): Promise<number> => Promise.resolve(fakeUserId)
+		);
+		jest.spyOn(idValidatorObject, "validateAsync").mockImplementation(
+			(): Promise<Pick<ITodoItem, "id">> => Promise.resolve(fakeValidatedValue)
+		);
+		jest.spyOn(TodoItemDA, "delete").mockImplementation(
+			(): Promise<void> => Promise.resolve()
+		);
+		jest.spyOn(Logger, "error");
+
+		const nextSpy: any = jest.fn();
+		const resMock = ExpressTestHelpers.createResMock();
+		const reqMock: IReqMock = { body: { anything: "asdff" } };
+
+		// -- Act
+		await deleteTodoItem(reqMock as any, resMock, nextSpy);
+
+		// -- Assert
+		expect(AuthUtils.getUserIdFromSession).toHaveBeenCalledWith(reqMock);
+		expect(idValidatorObject.validateAsync).toHaveBeenCalledWith(reqMock.body);
+		expect(TodoItemDA.delete)
+			.toHaveBeenCalledWith({ ...fakeValidatedValue, user_id: fakeUserId });
+		expect(resMock.json).toHaveBeenCalledWith(ResponseType.OK);
+		expect(Logger.error).not.toHaveBeenCalled();
+	});
+
+	test("should catch auth error properly", async () => {
+		// -- Arrange
+		jest.spyOn(AuthUtils, "getUserIdFromSession").mockImplementation(
+			(): Promise<number> => Promise.reject(errorMessage)
+		);
+		jest.spyOn(idValidatorObject, "validateAsync").mockImplementation(
+			(): Promise<Pick<ITodoItem, "id">> => Promise.resolve(fakeValidatedValue)
+		);
+		jest.spyOn(TodoItemDA, "delete").mockImplementation(
+			(): Promise<void> => Promise.resolve()
+		);
+		jest.spyOn(Logger, "error");
+
+		const nextSpy: any = jest.fn();
+		const resMock = ExpressTestHelpers.createResMock();
+		const reqMock: IReqMock = { body: { anything: "ddsfdsf" } };
+
+		// -- Act
+		await deleteTodoItem(reqMock as any, resMock, nextSpy);
+
+		// -- Assert
+		expect(AuthUtils.getUserIdFromSession).toHaveBeenCalledWith(reqMock);
+		expect(idValidatorObject.validateAsync).not.toHaveBeenCalled();
+		expect(TodoItemDA.delete).not.toHaveBeenCalled();
+		expect(resMock.json).not.toHaveBeenCalledWith(ResponseType.OK);
+		expect(Logger.error).toHaveBeenCalledWith(errorMessage);
+		expect(nextSpy).toHaveBeenCalledWith("Deleting item failed");
+	});
+
+	test("should catch validation error properly", async () => {
+		// -- Arrange
+		jest.spyOn(AuthUtils, "getUserIdFromSession").mockImplementation(
+			(): Promise<number> => Promise.resolve(fakeUserId)
+		);
+		jest.spyOn(idValidatorObject, "validateAsync").mockImplementation(
+			(): Promise<Pick<ITodoItem, "id">> => Promise.reject(errorMessage)
+		);
+		jest.spyOn(TodoItemDA, "delete").mockImplementation(
+			(): Promise<void> => Promise.resolve()
+		);
+		jest.spyOn(Logger, "error");
+
+		const nextSpy: any = jest.fn();
+		const resMock = ExpressTestHelpers.createResMock();
+		const reqMock: IReqMock = { body: { anything: "ddsfdsf" } };
+
+		// -- Act
+		await deleteTodoItem(reqMock as any, resMock, nextSpy);
+
+		// -- Assert
+		expect(AuthUtils.getUserIdFromSession).toHaveBeenCalledWith(reqMock);
+		expect(idValidatorObject.validateAsync).toHaveBeenCalledWith(reqMock.body);
+		expect(TodoItemDA.delete).not.toHaveBeenCalled();
+		expect(resMock.json).not.toHaveBeenCalled();
+		expect(Logger.error).toHaveBeenCalledWith(errorMessage);
+		expect(nextSpy).toHaveBeenCalledWith("Deleting item failed");
+	});
+
+	test("should catch validation error properly", async () => {
+		// -- Arrange
+		jest.spyOn(AuthUtils, "getUserIdFromSession").mockImplementation(
+			(): Promise<number> => Promise.resolve(fakeUserId)
+		);
+		jest.spyOn(idValidatorObject, "validateAsync").mockImplementation(
+			(): Promise<Pick<ITodoItem, "id">> => Promise.resolve(fakeValidatedValue)
+		);
+		jest.spyOn(TodoItemDA, "delete").mockImplementation(
+			(): Promise<void> => Promise.reject(errorMessage)
+		);
+		jest.spyOn(Logger, "error");
+
+		const nextSpy: any = jest.fn();
+		const resMock = ExpressTestHelpers.createResMock();
+		const reqMock: IReqMock = { body: { anything: "ddsfdsf" } };
+
+		// -- Act
+		await deleteTodoItem(reqMock as any, resMock, nextSpy);
+
+		// -- Assert
+		expect(AuthUtils.getUserIdFromSession).toHaveBeenCalledWith(reqMock);
+		expect(idValidatorObject.validateAsync).toHaveBeenCalledWith(reqMock.body);
+		expect(TodoItemDA.delete)
+			.toHaveBeenCalledWith({ ...fakeValidatedValue, user_id: fakeUserId });
+		expect(resMock.json).not.toHaveBeenCalled();
+		expect(Logger.error).toHaveBeenCalledWith(errorMessage);
+		expect(nextSpy).toHaveBeenCalledWith("Deleting item failed");
 	});
 });

@@ -2,7 +2,7 @@
 import { ValidationError } from "joi";
 import {
 	INewTodoItem, todoItemDBModel, TodoItemStatus, newTodoItemValidator,
-	todoItemValidator, ITodoItem
+	todoItemValidator, ITodoItem, idValidatorObject
 } from "./todo-item";
 
 test("test that columns' key name and value match", () => {
@@ -222,4 +222,47 @@ describe("todoItemValidator", () => {
 			});
 		});
 	});
-}); 
+});
+
+describe("idValidatorObject", () => {
+	describe("validation", () => {
+		// -- Arrange
+		const validItems: Array<Pick<ITodoItem, "id">> = [
+			{
+				id: 0,
+			},
+			{
+				id: Number.MAX_SAFE_INTEGER,
+			},
+		];
+		const invalidItems: Array<Pick<ITodoItem, "id">> = [
+			{
+				id: -1,
+			},
+			{
+				id: Number.MAX_SAFE_INTEGER + 1,
+			},
+		];
+
+		// -- Act & Assert
+		validItems.forEach((item: Pick<ITodoItem, "id">) => {
+			test("item (w/ task: " + item.id + ") should pass validation", () => {
+				return idValidatorObject.validateAsync(item)
+					.then(validatedValue => {
+						expect(validatedValue).toEqual(item);
+					});
+			});
+		});
+		invalidItems.forEach((item: Pick<ITodoItem, "id">) => {
+			test("item (w/ task: " + item.id + ") should be rejected", () => {
+				return idValidatorObject.validateAsync(item)
+					.then(() => {
+						return Promise.reject("should have already been rejected");
+					})
+					.catch(error => {
+						expect(error).toBeInstanceOf(ValidationError);
+					});
+			});
+		});
+	});
+});

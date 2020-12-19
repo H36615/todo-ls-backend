@@ -1,5 +1,6 @@
 import { Logger } from "../../utils/logger/logger";
 import {
+	idValidatorObject,
 	INewTodoItem, ITodoItem, newTodoItemValidator, todoItemValidator
 } from "../../models/todo-item/todo-item";
 import { IController, ResponseType } from "../interfaces";
@@ -46,7 +47,7 @@ export const updateTodoItem: IController = (req, res, next): Promise<void> => {
 	return AuthUtils.getUserIdFromSession(req)
 		.then((userId: number) => {
 			// Validate param
-			return todoItemValidator.validateAsync({...req.body, user_id: userId});
+			return todoItemValidator.validateAsync({ ...req.body, user_id: userId });
 		})
 		.then((validatedValue: ITodoItem) => {
 			return TodoItemDA.update(validatedValue);
@@ -57,5 +58,27 @@ export const updateTodoItem: IController = (req, res, next): Promise<void> => {
 		.catch(error => {
 			Logger.error(error);
 			next(new Error("Updating item failed"));
+		});
+};
+
+export const deleteTodoItem: IController = (req, res, next): Promise<void> => {
+	let userId: number;
+
+	return AuthUtils.getUserIdFromSession(req)
+		.then((_userId: number) => {
+			userId = _userId;
+
+			// Validate param
+			return idValidatorObject.validateAsync(req.body);
+		})
+		.then((validated: Pick<ITodoItem, "id">) => {
+			return TodoItemDA.delete({ ...validated, user_id: userId });
+		})
+		.then(() => {
+			res.json(ResponseType.OK);
+		})
+		.catch(error => {
+			Logger.error(error);
+			next("Deleting item failed");
 		});
 };
