@@ -1,5 +1,6 @@
 import { ExpressTestHelpers } from "../../../../testing/express-mocks";
 import { passportConfig } from "../../../config/passport-config";
+import { AuthUtils } from "../../../utils/auth/auth";
 
 
 describe("Routes", () => {
@@ -19,10 +20,12 @@ describe("Routes", () => {
 	test("routes should be initialized", () => {
 
 		// Arrange
+		const getSpy = jest.fn();
 		const postSpy = jest.fn();
-		ExpressTestHelpers.mockExpress(undefined, postSpy);
+		ExpressTestHelpers.mockExpress(getSpy, postSpy);
 		const registerUserRoute = "/register";
 		const loginUserRoute = "/login";
+		const validSessionRoute = "/valid-session";
 		jest.spyOn(passportConfig, "authenticate");
 
 		// Act
@@ -36,6 +39,11 @@ describe("Routes", () => {
 		expect(postSpy).toHaveBeenCalledWith(
 			loginUserRoute,
 			expect.any(Function), // Authenticator
+			expect.any(Function),
+		);
+		expect(getSpy).toHaveBeenCalledWith(
+			validSessionRoute,
+			AuthUtils.sessionIsAuthenticated,
 			expect.any(Function),
 		);
 		expect(passportConfig.authenticate).toHaveBeenCalled();

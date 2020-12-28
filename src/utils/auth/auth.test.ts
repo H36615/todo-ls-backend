@@ -216,8 +216,10 @@ describe("AuthUtils", () => {
 			// -- Act & Assert
 			AuthUtils.getUserIdFromSession(reqMock)
 				.catch(error => {
-					expect(error).toEqual("user id not found from the session");
-					expect(Logger.error).toHaveBeenCalledWith("user id not found from the session");
+					expect(error).toEqual("Session authentication error");
+					expect(Logger.error).toHaveBeenCalledWith(
+						"user id not found from the session for id: undefined"
+					);
 					done();
 				});
 		});
