@@ -72,9 +72,8 @@ export class AuthUtils {
 	public static getUserIdFromSession(req: Request): Promise<number> {
 		const userId = (req.user as IExistingUser)?.id;
 		if (userId == undefined) {
-			const errorMessage = "user id not found from the session";
-			Logger.error(errorMessage);
-			return Promise.reject(errorMessage);
+			Logger.error("user id not found from the session for id: " + userId);
+			return Promise.reject("Session authentication error");
 		}
 
 		return Promise.resolve(userId);
