@@ -35,7 +35,13 @@ app.use(expressSession({
 		secure: EnvironmentUtils.getValidatedEnvironment() === Environment.production
 			? true
 			: "auto",
-		maxAge: 1000 * 60 * 60 * 24 * 1 // value in milliseconds
+		maxAge: 1000 * 60 * 60 * 24 * 1, // value in milliseconds
+		// Some browsers will make this "lax" automatically if none included,
+		// and e.g. chrome would not work, so debugging can become difficult
+		// when client is localhost & backend is in https. Postman should still work.
+		sameSite: EnvironmentUtils.getValidatedEnvironment() === Environment.production
+			? "strict"
+			: "none"
 	},
 }));
 app.use(passportConfig.initialize());
