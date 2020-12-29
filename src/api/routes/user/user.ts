@@ -1,7 +1,6 @@
 import { Router } from "express";
 import { passportConfig, passportStrategies } from "../../../config/passport-config";
-import { registerUser } from "../../../controllers/user/user";
-import { AuthUtils } from "../../../utils/auth/auth";
+import { registerUser, sessionIsValid } from "../../../controllers/user/user";
 
 const router = Router();
 
@@ -19,10 +18,7 @@ router.post(
 
 router.get(
 	"/valid-session",
-	AuthUtils.sessionIsAuthenticated,
-	(req, res) => {
-		res.json(true);
-	}
+	sessionIsValid,
 );
 
 export default router;

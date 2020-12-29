@@ -1,8 +1,9 @@
 
 import { Logger } from "../../utils/logger/logger";
-import { INewUser, newUserValidator } from "../../models/user/user";
+import { IExistingUser, INewUser, newUserValidator } from "../../models/user/user";
 import { IController, ResponseType } from "../interfaces";
 import { UserDA, userFoundByEmailErrorText } from "../../data-access/user/user";
+import { AuthUtils } from "../../utils/auth/auth";
 
 export const registerUser: IController = (req, res, next): Promise<void> => {
 
@@ -17,8 +18,7 @@ export const registerUser: IController = (req, res, next): Promise<void> => {
 			return UserDA.createNewUser(validatedValue).then(() => {
 				res.json(ResponseType.UserCreated);
 			});
-		}
-		)
+		})
 		.catch(error => {
 			Logger.error(error);
 			const conflictCode = 409;
@@ -29,5 +29,22 @@ export const registerUser: IController = (req, res, next): Promise<void> => {
 			if (res.statusCode !== 500)
 				next(error);
 			next("Other error");
+		});
+};
+
+/** Respond w/ user info if session is valid, otherwise false as unauthorized. */
+export const sessionIsValid: IController = (req, res, next): Promise<void> => {
+	return Promise.resolve(AuthUtils.isAuthenticated(req))
+		.then(isAuthenticated => {
+			if (isAuthenticated)
+				res.json(AuthUtils.stripUserInfo(req.user as IExistingUser));
+			else {
+				const unauthorized = 401;
+				res.status(unauthorized).json(false);
+			}
+		})
+		.catch(error => {
+			Logger.error(error);
+			next("Session authentication check failed");
 		});
 };

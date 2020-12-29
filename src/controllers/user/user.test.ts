@@ -1,10 +1,11 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { ExpressTestHelpers, IReqMock } from "../../../testing/express-mocks";
 import { UserDA, userFoundByEmailErrorText } from "../../data-access/user/user";
-import { newUserValidator } from "../../models/user/user";
+import { IExistingUser, newUserValidator } from "../../models/user/user";
+import { AuthUtils } from "../../utils/auth/auth";
 import { Logger } from "../../utils/logger/logger";
 import { ResponseType } from "../interfaces";
-import { registerUser } from "./user";
+import { registerUser, sessionIsValid } from "./user";
 
 jest.mock("../../models/user/user");
 
@@ -58,7 +59,7 @@ describe("user controller", () => {
 			expect(resMock.status).toHaveBeenCalledWith(422);
 			expect(nextSpy).toHaveBeenCalledWith(errorMessage);
 		});
-		
+
 		test("should catch existing email data access error properly", async () => {
 			// -- Arrange
 			const validatedValue = "validated value";
@@ -109,6 +110,64 @@ describe("user controller", () => {
 			expect(UserDA.createNewUser).toHaveBeenCalledWith(validatedValue);
 			expect(Logger.error).toHaveBeenCalled();
 			expect(nextSpy).toHaveBeenCalledWith("Other error");
+		});
+	});
+
+	describe("sessionIsValid", () => {
+
+		const fakeUserInfo: Pick<IExistingUser, "username" | "id" | "tag"> = {
+			username: "yeah",
+			id: 123,
+			tag: 456,
+		};
+
+		test("should respond properly when authentication succeeds", async () => {
+			// -- Arrange
+			const authenticated = true;
+			const reqMock: IReqMock = { body: { user: fakeUserInfo } };
+			const resMock = ExpressTestHelpers.createResMock();
+			const nextSpy: any = jest.fn();
+
+			jest.spyOn(AuthUtils, "isAuthenticated").mockImplementation(
+				(): boolean => authenticated
+			);
+			jest.spyOn(AuthUtils, "stripUserInfo").mockImplementation(
+				(): Pick<IExistingUser, "username" | "id" | "tag"> => fakeUserInfo
+			);
+			jest.spyOn(Logger, "error");
+
+			// -- Act
+			await sessionIsValid(reqMock as any, resMock, nextSpy);
+
+			// -- Assert
+			expect(resMock.json).toHaveBeenCalledWith(fakeUserInfo);
+			expect(Logger.error).not.toHaveBeenCalled();
+			expect(nextSpy).not.toHaveBeenCalled();
+		});
+
+		test.skip("should respond properly when authentication fails", async () => {
+			// -- Arrange
+			const notAuthenticated = false;
+			const reqMock: IReqMock = { body: { user: fakeUserInfo } };
+			const resMock = ExpressTestHelpers.createResMock();
+			const nextSpy: any = jest.fn();
+
+			jest.spyOn(AuthUtils, "isAuthenticated").mockImplementation(
+				(): boolean => notAuthenticated
+			);
+			jest.spyOn(AuthUtils, "stripUserInfo").mockImplementation(
+				(): Pick<IExistingUser, "username" | "id" | "tag"> => fakeUserInfo
+			);
+			jest.spyOn(Logger, "error");
+
+			// -- Act
+			await sessionIsValid(reqMock as any, resMock, nextSpy);
+
+			// -- Assert
+			expect(resMock.status).toHaveBeenCalledWith(401);
+			expect(resMock.json).toHaveBeenCalledWith(false);
+			expect(Logger.error).not.toHaveBeenCalled();
+			expect(nextSpy).not.toHaveBeenCalled();
 		});
 	});
 });

@@ -49,24 +49,37 @@ export class AuthUtils {
 
 				// All OK.
 				if (hashesMatch)
-					return Promise.resolve({
-						username: foundUser.username,
-						tag: foundUser.tag,
-						id: foundUser.id
-					});
+					return Promise.resolve(this.stripUserInfo(foundUser));
 
 				return Promise.reject("error: Hash did not match.");
 			});
+	}
+
+	/**
+	 * Strip info from user leaving only the fields that are safe to
+	 * send back to client.
+	 */
+	public static stripUserInfo(user: IExistingUser)
+		: Pick<IExistingUser, "username" | "tag" | "id"> {
+		return {
+			username: user.username,
+			tag: user.tag,
+			id: user.id,
+		};
 	}
 
 	/** AKA is logged in. */
 	public static sessionIsAuthenticated(req: Request, res: Response, next: NextFunction): void {
 		// passport.js makes sure this function is in 'req'.
 		// Value comes from sent, deserialized ('passportConfig.deserializeUser') cookie.
-		if (req.isAuthenticated())
+		if (this.isAuthenticated(req))
 			next();
 		else
 			next(new Error("User authentication failed"));
+	}
+
+	public static isAuthenticated(req: Request): boolean {
+		return req.isAuthenticated();
 	}
 
 	public static getUserIdFromSession(req: Request): Promise<number> {

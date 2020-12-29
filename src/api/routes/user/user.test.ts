@@ -1,7 +1,6 @@
 import { ExpressTestHelpers } from "../../../../testing/express-mocks";
 import { passportConfig } from "../../../config/passport-config";
-import { AuthUtils } from "../../../utils/auth/auth";
-
+import { sessionIsValid } from "../../../controllers/user/user";
 
 describe("Routes", () => {
 
@@ -43,8 +42,7 @@ describe("Routes", () => {
 		);
 		expect(getSpy).toHaveBeenCalledWith(
 			validSessionRoute,
-			AuthUtils.sessionIsAuthenticated,
-			expect.any(Function),
+			sessionIsValid,
 		);
 		expect(passportConfig.authenticate).toHaveBeenCalled();
 	});
