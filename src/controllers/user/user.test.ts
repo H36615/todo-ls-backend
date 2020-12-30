@@ -5,7 +5,7 @@ import { IExistingUser, newUserValidator } from "../../models/user/user";
 import { AuthUtils } from "../../utils/auth/auth";
 import { Logger } from "../../utils/logger/logger";
 import { ResponseType } from "../interfaces";
-import { registerUser, sessionIsValid } from "./user";
+import { registerUser, sessionIsValid, signOut } from "./user";
 
 jest.mock("../../models/user/user");
 
@@ -140,6 +140,7 @@ describe("user controller", () => {
 			await sessionIsValid(reqMock as any, resMock, nextSpy);
 
 			// -- Assert
+			expect(AuthUtils.isAuthenticated).toHaveBeenCalledWith(reqMock);
 			expect(resMock.json).toHaveBeenCalledWith(fakeUserInfo);
 			expect(Logger.error).not.toHaveBeenCalled();
 			expect(nextSpy).not.toHaveBeenCalled();
@@ -164,10 +165,44 @@ describe("user controller", () => {
 			await sessionIsValid(reqMock as any, resMock, nextSpy);
 
 			// -- Assert
+			expect(AuthUtils.isAuthenticated).toHaveBeenCalledWith(reqMock);
 			expect(resMock.status).toHaveBeenCalledWith(401);
 			expect(resMock.json).toHaveBeenCalledWith(false);
 			expect(Logger.error).not.toHaveBeenCalled();
 			expect(nextSpy).not.toHaveBeenCalled();
+		});
+	});
+
+	describe("signOut", () => {
+
+		test("Should sign out properly", async () => {
+			// -- Arrange
+			const reqMock = { user: "i...exist", logOut: jest.fn() };
+			const resMock = ExpressTestHelpers.createResMock();
+			const nextSpy: any = jest.fn();
+
+			// -- Act
+			await signOut(reqMock as any, resMock, nextSpy);
+
+			// -- Assert
+			expect(reqMock.logOut).toHaveBeenCalled();
+			expect(resMock.json).toHaveBeenCalledWith(ResponseType.OK);
+			expect(nextSpy).not.toHaveBeenCalled();
+		});
+
+		test("should respond w/ error when no user found in session", async () => {
+			// -- Arrange
+			const reqMock = { user: undefined, logOut: jest.fn() };
+			const resMock = ExpressTestHelpers.createResMock();
+			const nextSpy: any = jest.fn();
+
+			// -- Act
+			await signOut(reqMock as any, resMock, nextSpy);
+
+			// -- Assert
+			expect(reqMock.logOut).not.toHaveBeenCalled();
+			expect(resMock.json).not.toHaveBeenCalled();
+			expect(nextSpy).toHaveBeenCalledWith("No user found to sign out");
 		});
 	});
 });

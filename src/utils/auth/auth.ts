@@ -72,7 +72,8 @@ export class AuthUtils {
 	public static sessionIsAuthenticated(req: Request, res: Response, next: NextFunction): void {
 		// passport.js makes sure this function is in 'req'.
 		// Value comes from sent, deserialized ('passportConfig.deserializeUser') cookie.
-		if (this.isAuthenticated(req))
+		// Also, cannot use this.isAuthenticated. For some reason the function is missing from req.
+		if (req.isAuthenticated())
 			next();
 		else
 			next(new Error("User authentication failed"));

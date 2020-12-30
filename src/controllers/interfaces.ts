@@ -1,7 +1,7 @@
 import { NextFunction, Request, Response } from "express";
 
 export interface IController {
-	(req: Request, res: Response, next: NextFunction): Promise<void>
+	(req: Request, res: Response, next: NextFunction): Promise<void> | void
 }
 
 export const enum ResponseType {

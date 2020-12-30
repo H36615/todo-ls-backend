@@ -48,3 +48,13 @@ export const sessionIsValid: IController = (req, res, next): Promise<void> => {
 			next("Session authentication check failed");
 		});
 };
+
+export const signOut: IController = (req, res, next): void => {
+	if (req.user) {
+		req.logOut();
+		res.json(ResponseType.OK);
+	}
+	else {
+		next("No user found to sign out");
+	}
+};
