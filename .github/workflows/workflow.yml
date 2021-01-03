@@ -3,7 +3,7 @@ name: todo-ls-backend
 on:
   push:
     branches:
-      - develop
+      - master
 jobs:
   test-build-and-deploy:
     runs-on: ubuntu-latest
