@@ -1,35 +1,28 @@
 // Generated with 'npx knex seed:make <table-name>>'.
+import * as dotenv from "dotenv";
+dotenv.config({ path: __dirname + "/../.env" });
 
 import * as Knex from "knex";
-import { IExistingUser, userDBModel } from "../../src/models/user/user";
-
-const userData1Id = 0;
+import { userDBModel } from "../../src/models/user/user";
+import { UserDA } from "../../src/data-access/user/user";
 
 export async function seed(knex: Knex): Promise<void> {
-	// Deletes ALL existing entries
+	// -- Delete existing entries
+
 	await knex(userDBModel.table).del();
-    
-	// -- Inserts seed entries
 
-	const userData1: IExistingUser = {
-		id: userData1Id,
-		username: "Testman99",
-		tag: 0,
-		email: "testman@domain.net",
-		password: "testman",
-	};
-	const userData2: IExistingUser = {
-		id: 1,
-		username: "DevguY",
-		tag: 0,
-		email: "devguy@domain.net",
-		password: "devguy",
-	};
+	// -- Insert seed entries
 
-	await knex(userDBModel.table).insert([
-		userData1,
-		userData2,
-	]);
+	if (process.env.PUBLIC_TEST_USER_USERNAME
+		&& process.env.PUBLIC_TEST_USER_EMAIL
+		&& process.env.PUBLIC_TEST_USER_PASSWORD
+	) await UserDA.createNewUser(
+		{
+			username: process.env.PUBLIC_TEST_USER_USERNAME,
+			email: process.env.PUBLIC_TEST_USER_EMAIL,
+			password: process.env.PUBLIC_TEST_USER_PASSWORD,
+		}
+	);
 }
 
-export { userData1Id };
+export const userData1Id = 0;

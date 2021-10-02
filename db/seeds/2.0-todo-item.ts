@@ -1,32 +1,19 @@
-// import * as Knex from "knex";
-
 import Knex from "knex";
-import { ITodoItem, todoItemDBModel, TodoItemStatus } from "../../src/models/todo-item/todo-item";
-import { userData1Id } from "./1.0-user";
+import { todoItemDBModel } from "../../src/models/todo-item/todo-item";
 
 export async function seed(knex: Knex): Promise<void> {
-	// -- Deletes ALL existing entries
-	
+	// -- Delete existing entries
+
 	await knex(todoItemDBModel.table).del();
-	// TODO delete user table.
-	
 
-	// -- Inserts seed entries
+	// -- Insert seed entries
 
-	const todoItemTableData1: ITodoItem = {
-		id: 0,
-		user_id: userData1Id,
-		task: "get up from bed",
-		status: TodoItemStatus.todo,
-	};
-	const todoItemTableData2: ITodoItem = {
-		id: 1,
-		user_id: userData1Id,
-		task: "drink water",
-		status: TodoItemStatus.done,
-	};
-	await knex(todoItemDBModel.table).insert([
-		todoItemTableData1,
-		todoItemTableData2,
-	]);
+	// Not really necessary to add this.
+	// await TodoItemDA.addNew(
+	// 	{
+	// 		user_id: <get_public_test_user_id>,
+	// 		task: "water the plants",
+	// 		status: TodoItemStatus.todo,
+	// 	}
+	// );
 }
