@@ -17,8 +17,10 @@ const app = express();
 // eslint-disable-next-line max-len
 // https://stackoverflow.com/questions/19743396/cors-cannot-use-wildcard-in-access-control-allow-origin-when-credentials-flag-i#comment97905405_19744754
 const corsOrigins = [EnvironmentUtils.getValidatedCorsOrigin()];
-if (EnvironmentUtils.getValidatedEnvironment() === Environment.development)
-	corsOrigins.push("http://localhost:3000");
+// Uncomment to add dev dependant cors origins.
+// if (EnvironmentUtils.getValidatedEnvironment() === Environment.development) {
+// 	corsOrigins.push("http://localhost:3000");
+// }
 app.use(
 	cors({
 		origin: corsOrigins,
