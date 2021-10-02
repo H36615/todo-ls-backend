@@ -23,8 +23,7 @@ export class EnvironmentUtils {
 	}
 
 	public static getValidatedCorsOrigin(): string {
-		if (process.env.CORS_ORIGIN != undefined
-			&& process.env.CORS_ORIGIN != "")
+		if (process.env.CORS_ORIGIN != undefined)
 			return process.env.CORS_ORIGIN;
 
 		throw new Error(
@@ -34,14 +33,14 @@ export class EnvironmentUtils {
 	}
 
 	public static getValidatedServerPort(): number {
-		if (process.env.SERVER_PORT != undefined
-			&& process.env.SERVER_PORT != ""
-			&& !isNaN(+process.env.SERVER_PORT))
-			return +process.env.SERVER_PORT;
+		if (process.env.BACKEND_APPLICATION_PORT != undefined
+			&& process.env.BACKEND_APPLICATION_PORT != ""
+			&& !isNaN(+process.env.BACKEND_APPLICATION_PORT))
+			return +process.env.BACKEND_APPLICATION_PORT;
 
 		throw new Error(
-			"Wrong value in env.SERVER_PORT, which was: "
-			+ process.env.SERVER_PORT
+			"Wrong value in env.BACKEND_APPLICATION_PORT, which was: "
+			+ process.env.BACKEND_APPLICATION_PORT
 		);
 	}
 }

@@ -72,12 +72,12 @@ describe("environment utils", () => {
 			expect(EnvironmentUtils.getValidatedCorsOrigin()).toEqual(validValue);
 		});
 
-		test("should throw error on invalid env value", () => {
+		test("should not throw error on empty env value", () => {
 			process.env.CORS_ORIGIN = "";
 
 			require("./environment");
 
-			expect(EnvironmentUtils.getValidatedCorsOrigin).toThrowError();
+			expect(EnvironmentUtils.getValidatedCorsOrigin).not.toThrowError();
 		});
 	});
 
@@ -88,7 +88,7 @@ describe("environment utils", () => {
 
 		test("should return a valid env value", () => {
 			const validValue = "1234";
-			process.env.SERVER_PORT = validValue;
+			process.env.BACKEND_APPLICATION_PORT = validValue;
 
 			require("./environment");
 
@@ -97,7 +97,7 @@ describe("environment utils", () => {
 
 		test("should throw error on invalid env value", () => {
 			const invalidValue = "1234a";
-			process.env.SERVER_PORT = invalidValue;
+			process.env.BACKEND_APPLICATION_PORT = invalidValue;
 
 			require("./environment");
 
@@ -105,7 +105,7 @@ describe("environment utils", () => {
 		});
 
 		test("should throw error on empty env value", () => {
-			process.env.SERVER_PORT = "";
+			process.env.BACKEND_APPLICATION_PORT = "";
 
 			require("./environment");
 
