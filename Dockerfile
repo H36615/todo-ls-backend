@@ -2,21 +2,16 @@
 # Build from:
 FROM node:12-alpine
 
-
 WORKDIR /
 
 # Copy package & package-lock
 COPY package*.json ./
 
-RUN npm install
-# TODO If you are building your code for production
-# RUN npm ci --only=production
+RUN npm ci
 
 # Bundle app source
 COPY . .
 
-EXPOSE 3000
+RUN npm run lint
+
 CMD [ "npm", "start" ]
-
-
-
