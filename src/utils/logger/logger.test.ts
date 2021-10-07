@@ -8,7 +8,7 @@ describe("logger", () => {
 
 	test("error", () => {
 		jest.spyOn(console, "log");
-		const errorMessage = "faily";
+		const errorMessage = "erro message";
 
 		Logger.error(errorMessage);
 
@@ -17,7 +17,7 @@ describe("logger", () => {
 
 	test("debug", () => {
 		jest.spyOn(console, "log");
-		const message = "lemons";
+		const message = "debug message";
 
 		Logger.debug(message);
 
